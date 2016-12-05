@@ -1,5 +1,5 @@
 {
-  "name": "votingsapp",
+  "name": "voting-app",
   "version": "1.0.0",
   "description": "voting app that utilises mongodb and websockets for live updates",
   "main": "server.js",
