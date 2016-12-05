@@ -1,0 +1,33 @@
+{
+  "name": "votingsapp",
+  "version": "1.0.0",
+  "description": "voting app that utilises mongodb and websockets for live updates",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "nstart": "nodemon server.js",
+    "pug": "pug ./app/index.pug -o ./dist/",
+    "watch-pug": "pug -w ./app/index.pug -o ./dist/",
+    "css": "stylus ./app/*.styl -o ./dist/",
+    "watch-css": "stylus -w ./app/*.styl -o ./dist/",
+    "browserify": "browserify ./app/index.js -o ./dist/bundle.js",
+    "watch-browserify": "watchify ./app/index.js -o ./dist/bundle.js",
+    "build": "npm-run-all --parallel pug css browserify",
+    "start-dev": "npm-run-all --parallel watch-pug watch-css watch-browserify nstart"
+  },
+  "author": "Jonathan T L Lee",
+  "repository": "https://github.com/Lee182/voting-app.git",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongodb": "^2.2.12"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "npm-run-all": "^3.1.2",
+    "pug": "^2.0.0-beta6",
+    "stylus": "^0.54.5",
+    "watchify": "^3.7.0"
+  }
+}
