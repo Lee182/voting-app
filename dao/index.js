@@ -1,5 +1,7 @@
 var type_validate = require('./type_validate')
 var poll_build = require('./poll_build.js')
+var poll_option_GC = require('./poll_option_GC.js')
+
 
 // data acess object
 const Mongo = require('mongodb')
@@ -11,7 +13,7 @@ let o = {
 }
 
 function ensureConnected(fn) {return function() {
-  if (o.db === null) {return Promise.reject('db disconnected')}
+  if (o.db === null) {return Promise.resolve({err: 'db disconnected'})}
   return fn.apply(o, arguments)
 }}
 
@@ -25,22 +27,12 @@ o.connect = function() {
   })
 }
 
-o.user_exists = ensureConnected(function(_id){
-  return o.db.collection('poll_users')
-    .findOne({_id})
-    .then(function(result){
-      if (result === null) {
-        return Promise.reject(null)}
-      return Promise.resolve(result)
-    })
-})
-
 o.poll_create = ensureConnected(function({poll}){
   poll = poll_build(poll)
 
   var val = type_validate.poll(poll)
   if (val.valid === false) {
-    return Promise.reject({err: val})
+    return Promise.resolve({err: val})
   }
   return o.db.collection('polls')
     .insert(poll)
@@ -48,25 +40,7 @@ o.poll_create = ensureConnected(function({poll}){
       return Promise.resolve({result: result.ops[0]})
     })
     .catch(function(err){
-      return Promise.reject({err})
-    })
-})
-
-o.poll_option_add = ensureConnected(function({option, poll_id}){
-  var val = type_validate.option(option)
-  if (val.valid === false) {
-    return Promise.reject({err: val})
-  }
-  return o.db.collection('polls')
-    .update(
-      {_id: poll_id},
-      {$push: {options: option} }
-    )
-    .then(function(result){
-      return Promise.resolve({result: result.result})
-    })
-    .catch(function(err){
-      return Promise.reject(err)
+      return Promise.resolve({err})
     })
 })
 
@@ -74,13 +48,13 @@ o.poll_option_remove = ensureConnected(function({option, poll_id}){
   return o.db.collection('polls')
     .update(
       {_id: poll_id},
-      {$pull: {options: option} }
+      {$pullAll: {options: option} }
     )
     .then(function(result){
-      return Promise.resolve(result)
+      return Promise.resolve({result})
     })
     .catch(function(err){
-      return Promise.reject(err)
+      return Promise.resolve({err})
     })
 })
 
@@ -104,7 +78,7 @@ o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
 o.poll_vote = ensureConnected(function({vote, poll_id}){
   var val = type_validate.vote(vote)
   if (val.valid === false) {
-    return Promise.reject({err: val})
+    return Promise.resolve({err: val})
   }
   return o.db.collection('polls')
     .update(
@@ -112,11 +86,47 @@ o.poll_vote = ensureConnected(function({vote, poll_id}){
       {$push: {vote: vote} }
     )
     .then(function(result){
-      return Promise.resolve(result)
+      return Promise.resolve({result})
     })
     .catch(function(err){
-      return Promise.reject(err)
+      return Promise.resolve({err})
     })
+})
+
+o.poll_read_byid = ensureConnected(function({poll_id}){
+  return o.db.findOne({_id: poll_id})
+})
+
+o.poll_option_add = ensureConnected(function({option, poll_id}) {
+  // verify option has {option: 'string', creation_date: Date}
+  var val = type_validate.option(option)
+  if (val.valid === false) {
+    return Promise.resolve({err: val})
+  }
+  function will_adding_option_change_record({poll, option}){
+    let unique_options = poll.options.map(function(a){return a})
+    unique_options.push(option)
+    unique_options = poll_option_GC(unique_options)
+
+    const changes = JSON.stringify(poll.options) !== JSON.stringify(unique_options)
+
+    return {changes, unique_options}
+  }
+
+  return o.poll_read_byid({poll_id}).then(function(poll){
+    if (poll === null) {
+      return Promise.resolve({err: 'poll_id not found'})
+    }
+    let a = will_adding_option_change_record({poll, option})
+    if (a.changes === true) {
+      poll.options = a.unique_options
+    }
+    return o.db
+      .findOneAndReplace({_id: poll._id}, poll)
+      .then(function(result){
+        return Promise.resolve({poll, option, result})
+      })
+  })
 })
 
 

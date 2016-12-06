@@ -17,9 +17,9 @@ module.exports = {
     {option: 'red', creation_date: new Date('2016-10-09')},
     {option: 'red', creation_date: new Date('2016-10-09')}
   ],
-  anomynous_can_add_option: false, // anomynous can add options
-  anomynous_can_vote: true, // if false those not loggedin can vote
-  visibility: 'public', // all can see
-        // or ['dave', 'thersa_may'] // only these users can see
-  takein_new_votes: true, // or false
+  // anomynous_can_add_option: false, // anomynous can add options
+  // anomynous_can_vote: true, // if false those not loggedin can vote
+  // visibility: 'public', // all can see
+  //       // or ['dave', 'thersa_may'] // only these users can see
+  // takein_new_votes: true, // or false
 }
