@@ -2,7 +2,6 @@ var type_validate = require('./type_validate')
 var poll_build = require('./poll_build.js')
 var poll_option_GC = require('./poll_option_GC.js')
 
-
 // data acess object
 const Mongo = require('mongodb')
 let MongoClient = Mongo.MongoClient
@@ -38,20 +37,6 @@ o.poll_create = ensureConnected(function({poll}){
     .insert(poll)
     .then(function(result){
       return Promise.resolve({result: result.ops[0]})
-    })
-    .catch(function(err){
-      return Promise.resolve({err})
-    })
-})
-
-o.poll_option_remove = ensureConnected(function({option, poll_id}){
-  return o.db.collection('polls')
-    .update(
-      {_id: poll_id},
-      {$pullAll: {options: option} }
-    )
-    .then(function(result){
-      return Promise.resolve({result})
     })
     .catch(function(err){
       return Promise.resolve({err})
@@ -98,7 +83,7 @@ o.poll_read_byid = ensureConnected(function({poll_id}){
 })
 
 o.poll_option_add = ensureConnected(function({option, poll_id}) {
-  // verify option has {option: 'string', creation_date: Date}
+  // verify option {option: 'string', creation_date: Date}
   var val = type_validate.option(option)
   if (val.valid === false) {
     return Promise.resolve({err: val})
@@ -127,6 +112,20 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
         return Promise.resolve({poll, option, result})
       })
   })
+})
+
+o.poll_option_remove = ensureConnected(function({option, poll_id}){
+  return o.db.collection('polls')
+    .update(
+      {_id: poll_id},
+      {$pullAll: {options: {$elemMatch: {option}} } }
+    )
+    .then(function(result){
+      return Promise.resolve({result})
+    })
+    .catch(function(err){
+      return Promise.resolve({err})
+    })
 })
 
 
