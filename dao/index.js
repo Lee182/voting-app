@@ -36,7 +36,7 @@ o.poll_create = ensureConnected(function({poll}){
   return o.db.collection('polls')
     .insert(poll)
     .then(function(result){
-      return Promise.resolve({result: result.ops[0]})
+      return Promise.resolve({poll: result.ops[0]})
     })
     .catch(function(err){
       return Promise.resolve({err})
@@ -46,18 +46,6 @@ o.poll_create = ensureConnected(function({poll}){
 o.poll_remove = ensureConnected(function({_id}){
   return o.db.collection('polls')
     .remove({_id})
-})
-
-o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
-  find.$or = [
-    { visibility: 'public' },
-    { visibility: user_id },
-  ]
-  var f = 'find'
-  if (findOne) {f = 'findOne'}
-  return o.db
-    .collection('polls')
-    [f](find, project)
 })
 
 o.poll_vote = ensureConnected(function({vote, poll_id}){
@@ -78,10 +66,6 @@ o.poll_vote = ensureConnected(function({vote, poll_id}){
     })
 })
 
-o.poll_read_byid = ensureConnected(function({poll_id}){
-  return o.db.findOne({_id: poll_id})
-})
-
 o.poll_option_add = ensureConnected(function({option, poll_id}) {
   // verify option {option: 'string', creation_date: Date}
   var val = type_validate.option(option)
@@ -92,7 +76,7 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
     let unique_options = poll.options.map(function(a){return a})
     unique_options.push(option)
     unique_options = poll_option_GC(unique_options)
-
+    console.log('unique', unique_options)
     const changes = JSON.stringify(poll.options) !== JSON.stringify(unique_options)
 
     return {changes, unique_options}
@@ -107,6 +91,7 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
       poll.options = a.unique_options
     }
     return o.db
+      .collection('polls')
       .findOneAndReplace({_id: poll._id}, poll)
       .then(function(result){
         return Promise.resolve({poll, option, result})
@@ -118,7 +103,7 @@ o.poll_option_remove = ensureConnected(function({option, poll_id}){
   return o.db.collection('polls')
     .update(
       {_id: poll_id},
-      {$pullAll: {options: {$elemMatch: {option}} } }
+      {$pull: {options: {option: option} } }
     )
     .then(function(result){
       return Promise.resolve({result})
@@ -127,6 +112,20 @@ o.poll_option_remove = ensureConnected(function({option, poll_id}){
       return Promise.resolve({err})
     })
 })
+
+
+o.poll_read_byid = ensureConnected(function({poll_id}){
+  return o.db.collection('polls').findOne({_id: poll_id})
+})
+
+o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
+  var f = 'find'
+  if (findOne) {f = 'findOne'}
+  return o.db
+    .collection('polls')
+    [f](find, project)
+})
+
 
 
 module.exports = o

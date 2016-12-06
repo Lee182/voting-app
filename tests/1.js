@@ -20,6 +20,7 @@ Promise.resolve().then(function(){
     poll: {
       question: 'Whats your favourite color',
       user_id: 'dave',
+      options: ['red', 'yellow', 'green'],
       creation_date: new Date()
     }
   }).then(log('pol_create: res:'))
@@ -27,15 +28,34 @@ Promise.resolve().then(function(){
 
 }).then(function(res){
 
-  // return dao.poll_option_add({
-  //   option: {
-  //     option: 'blue',
-  //     user_id: 'dave',
-  //     creation_date: new Date()
-  //   },
-  //   poll_id: res.result._id
-  // })
-  // .then(log('poll_option_add: res:'))
-  // .catch(log('poll_option_add: err:'))
+  return dao.poll_option_add({
+    option: {
+      option: 'blue',
+      user_id: 'dave',
+      creation_date: new Date()
+    },
+    poll_id: res.poll._id
+  })
+  .then(log('poll_option_add: res:'))
+
+}).then(function(res){
+
+  return dao.poll_option_add({
+    option: {
+      option: 'blue',
+      user_id: 'dave',
+      creation_date: new Date()
+    },
+    poll_id: res.poll._id
+  })
+  .then(log('poll_option_add: res:'))
+
+
+}).then(function(res){
+
+  return dao.poll_option_remove({
+    poll_id: res.poll._id,
+    option: 'red'
+  })
 
 })
