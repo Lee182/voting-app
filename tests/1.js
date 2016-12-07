@@ -50,18 +50,33 @@ Promise.resolve().then(function(){
   })
   .then(log('poll_option_add: res:'))
 
-
 }).then(function(res){
 
-  return dao.poll_option_remove({
-    poll_id: res.poll._id,
-    option: 'red'
-  }).then(log('poll_option_remove: res:'))
+  return dao.poll_vote({
+    vote: {
+      user_id: 'dave',
+      option: 'blue',
+      creation_date: new Date()
+    },
+    poll_id: res.poll._id
+  })
+  .then(log('poll_option_add: res:'))
+
 
 }).then(function(res){
-
-  return dao.poll_remove({
-    _id: res.poll._id,
-  }).then(log('poll_remove: res:'))
-
+  console.log(res.poll.votes)
 })
+// }).then(function(res){
+//
+//   return dao.poll_option_remove({
+//     poll_id: res.poll._id,
+//     option: 'red'
+//   }).then(log('poll_option_remove: res:'))
+//
+// }).then(function(res){
+//
+//   return dao.poll_remove({
+//     _id: res.poll._id,
+//   }).then(log('poll_remove: res:'))
+//
+// })

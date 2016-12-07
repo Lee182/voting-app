@@ -55,13 +55,18 @@ o.poll_vote = ensureConnected(function({vote, poll_id}){
   if (val.valid === false) {
     return Promise.resolve({err: val})
   }
+  var uobj = {}
+  // if (typeof vote.user_id === 'string') {
+  //   uobj.$pull = {votes: {user_id: vote.user_id}}
+  // }
+  // MongoError: Cannot update 'votes' and 'votes'
+  uobj.$push = {votes: vote}
   return o.db.collection('polls')
-    .update(
-      {_id: poll_id},
-      {$push: {vote: vote} }
-    )
+    .findOneAndUpdate({_id: poll_id}, uobj)
     .then(function(result){
-      return Promise.resolve({result})
+      poll = result.value
+      poll.votes.push(vote)
+      return Promise.resolve({poll, vote})
     })
     .catch(function(err){
       return Promise.resolve({err})
