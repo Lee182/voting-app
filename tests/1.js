@@ -1,4 +1,8 @@
 dao = require('../dao/index.js')
+dao.cb = function(o) {
+  console.log(JSON.stringify(o,null, 2))
+  console.log('\n')
+}
 function log(str) {
   return function(a){
     console.log(str, a)
@@ -23,7 +27,7 @@ Promise.resolve().then(function(){
       options: ['red', 'yellow', 'green'],
       creation_date: new Date()
     }
-  }).then(log('pol_create: res:'))
+  })//.then(log('pol_create: res:'))
 
 
 }).then(function(res){
@@ -36,7 +40,7 @@ Promise.resolve().then(function(){
     },
     poll_id: res.poll._id
   })
-  .then(log('poll_option_add: res:'))
+  //.then(log('poll_option_add: res:'))
 
 }).then(function(res){
 
@@ -48,7 +52,7 @@ Promise.resolve().then(function(){
     },
     poll_id: res.poll._id
   })
-  .then(log('poll_option_add: res:'))
+  //.then(log('poll_option_add: res:'))
 
 }).then(function(res){
 
@@ -60,23 +64,23 @@ Promise.resolve().then(function(){
     },
     poll_id: res.poll._id
   })
-  .then(log('poll_option_add: res:'))
+  //.then(log('poll_option_add: res:'))
 
 
-}).then(function(res){
-  console.log(res.poll.votes)
 })
-// }).then(function(res){
+// .then(function(res){
 //
 //   return dao.poll_option_remove({
 //     poll_id: res.poll._id,
 //     option: 'red'
 //   }).then(log('poll_option_remove: res:'))
 //
-// }).then(function(res){
-//
-//   return dao.poll_remove({
-//     _id: res.poll._id,
-//   }).then(log('poll_remove: res:'))
-//
 // })
+.then(function(res){
+
+  return dao.poll_remove({
+    _id: res.poll._id,
+  })
+  //.then(log('poll_remove: res:'))
+
+})

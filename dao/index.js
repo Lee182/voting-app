@@ -9,6 +9,14 @@ let mongourl = process.env.MONGOURL || require('../keys.js').mongourl
 let o = {
   db: null,
   ObjectId: Mongo.ObjectId
+  // cb function called when change happens
+}
+
+function call_cb(obj) {
+  if (typeof o.cb === 'function') {
+    o.cb(obj)
+    // obj {cmd, poll, vote, option}
+  }
 }
 
 function ensureConnected(fn) {return function() {
@@ -36,6 +44,7 @@ o.poll_create = ensureConnected(function({poll}){
   return o.db.collection('polls')
     .insert(poll)
     .then(function(result){
+      call_cb({cmd: 'poll_create', poll})
       return Promise.resolve({poll: result.ops[0]})
     })
     .catch(function(err){
@@ -46,6 +55,10 @@ o.poll_create = ensureConnected(function({poll}){
 o.poll_remove = ensureConnected(function({_id}){
   return o.db.collection('polls')
     .remove({_id}).then(function(res){
+      if (res.result.n === 0) {
+        return Promise.resolve({err: 'none removed'})
+      }
+      call_cb({cmd: 'poll_remove', poll_id: _id})
       return {result: res.result, poll_id: _id}
     })
 })
@@ -66,6 +79,7 @@ o.poll_vote = ensureConnected(function({vote, poll_id}){
     .then(function(result){
       poll = result.value
       poll.votes.push(vote)
+      call_cb({cmd: 'poll_vote', poll, vote})
       return Promise.resolve({poll, vote})
     })
     .catch(function(err){
@@ -101,6 +115,7 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
       .collection('polls')
       .findOneAndReplace({_id: poll._id}, poll)
       .then(function(result){
+        call_cb({cmd: 'poll_option_add', poll: result.value, option})
         return Promise.resolve({poll: result.value, option})
       })
   })
@@ -113,6 +128,7 @@ o.poll_option_remove = ensureConnected(function({option, poll_id}){
       {$pull: {options: {option: option} } }
     )
     .then(function(result){
+      call_cb({cmd: 'poll_option_remove', poll:result.value, option})
       return Promise.resolve({option, poll: result.value})
     })
     .catch(function(err){
