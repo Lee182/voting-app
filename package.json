@@ -21,7 +21,8 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
-    "mongodb": "^2.2.12"
+    "mongodb": "^2.2.12",
+    "socket.io": "^1.7.1"
   },
   "devDependencies": {
     "browserify": "^13.1.1",
