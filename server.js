@@ -3,12 +3,16 @@ var app = express()
 var http = require('http')
 var server = http.Server(app)
 var io = require('socket.io')(server)
+io.engine.ws = new (require('uws').Server)({
+  noServer: true,
+  perMessageDeflate: false
+})
 var port = process.env.PORT || 3000
 
-io.on('connection', function (socket) {
-  console.log(client.headers['cookie'])
-  socket.emit('news', { hello: 'world' })
-  socket.on('my other event', function(data) {
+io.on('connection', function(ws) {
+  var the_cookie = ws.handshake.headers.cookie
+  ws.emit('news', { hello: 'world' })
+  ws.on('hi', function(data) {
     console.log(data)
   })
 })
