@@ -6,10 +6,14 @@ w.postJSON = require('./lib/postJSON.js')
 w.app = new Vue({
   el: '#app',
   data: {
-    votes: []
+    polls: []
   },
   computed: {},
-  watch: {},
+  watch: {
+    polls: function(e){
+      console.log('polls change')
+    }
+  },
   methods: {},
   beforeCreate: function(){
     console.log('before create')
@@ -26,16 +30,18 @@ ws.on('event', function(data){
   console.log('event', 2, data)
 })
 
-ws.on('poll', function(data){
-  let poll_index = app.votes.findIndex(function(poll){
-    return poll._id === data._id
+ws.on('poll', function(new_poll){
+  console.log('new_poll', new_poll)
+
+  let poll_index = app.polls.findIndex(function(poll){
+    return poll._id === new_poll._id
   })
-  console.log(poll_index)
   if (poll_index === -1) {
-    return app.votes.push(data)
+    return app.polls.push(new_poll)
   }
-  if (app.votes[poll_index].date < data.date) {
-    app.votes[poll_index] = data
+  if (new_poll.date > app.polls[poll_index].date) {
+    console.log('herorro')
+    app.$set(app.polls, poll_index, new_poll)
   }
 })
 
@@ -68,7 +74,7 @@ ws.emit('run',{
       user_id: 'dave',
       creation_date: new Date()
     },
-    poll_id: '584ebef22b51604ce42a9f86'
+    poll_id: app.polls[0]._id
   }
 })
 

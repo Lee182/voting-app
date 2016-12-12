@@ -1,5 +1,18 @@
 #app(v-cloak)
   .title: h1 Voting-App
-  .data
-    pre
-      code.votes {{votes | json}}
+  .content
+    .data
+      code.votes {{polls | json}}
+    .forms
+      .poll_create
+        .user_id
+          label user_id:
+          input(placeholder='type your username')
+        .question
+          label question:
+          input(placeholder='type your question for people to vote on')
+        .options
+          label options:
+          input(placeholder='option A')
+          input(placeholder='option B')
+        button(type='submit') create poll

@@ -113,10 +113,10 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
     }
     return o.db
       .collection('polls')
-      .findOneAndReplace({_id: poll._id}, poll)
+      .findOneAndReplace({_id: poll._id}, poll, {returnNewDocument: true})
       .then(function(result){
-        call_cb({cmd: 'poll_option_add', poll: result.value, option})
-        return Promise.resolve({poll: result.value, option})
+        call_cb({cmd: 'poll_option_add', poll:result.value, option})
+        return Promise.resolve({poll, option})
       })
   })
 })
