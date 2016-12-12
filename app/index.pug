@@ -1,2 +1,12 @@
-p voting app
-script(src='/bundle.js')
+doctype
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet' href='/styl.css')
+    link(rel='stylesheet' href='https://opensource.keycdn.com/fontawesome/4.6.3/font-awesome.min.css')
+    title Voting-App
+  body
+    include content.pug
+    script(src='/vue.js')
+    script(src='/bundle.js')

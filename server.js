@@ -13,7 +13,10 @@ io.on('connection', function(ws) {
   var the_cookie = ws.handshake.headers.cookie
   ws.emit('news', { hello: 'world' })
   ws.on('hi', function(data) {
+    console.log(the_cookie)
+    console.log(this.id)
     console.log(data)
+    console.log('\n')
   })
 })
 
