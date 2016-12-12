@@ -8,15 +8,23 @@ io.engine.ws = new (require('uws').Server)({
   perMessageDeflate: false
 })
 var port = process.env.PORT || 3000
+var dao = require('./dao')
+
+dao.connect().then(function(){
+  return dao.db.collection('polls').remove({})
+})
 
 io.on('connection', function(ws) {
   var the_cookie = ws.handshake.headers.cookie
-  ws.emit('news', { hello: 'world' })
-  ws.on('hi', function(data) {
+  ws.emit('event', { hello: 'world!!' })
+
+  ws.on('run', function(data) {
     console.log(the_cookie)
-    console.log(this.id)
-    console.log(data)
-    console.log('\n')
+    dao[data.cmd](data.data).then(function(res){
+      console.log(res)
+      res.poll.date = Date.now()
+      ws.emit('poll', res.poll)
+    })
   })
 })
 

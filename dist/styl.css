@@ -153,6 +153,9 @@ button {
 .disable-text-select {
   user-select: none;
 }
+[v-cloak] {
+  display: none !important;
+}
 body {
   font-family: 'Josefin Sans', sans-serif;
   background-image: url("https://www.subtlepatterns.com/patterns/new_year_background.png");
@@ -166,4 +169,8 @@ body {
 }
 h1 {
   font-size: 2em;
+}
+.data {
+  padding: 2rem;
+  font-family: 'ubuntu mono', monospace;
 }
