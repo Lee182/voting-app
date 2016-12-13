@@ -1,0 +1,25 @@
+.poll_create
+  h2 Create Poll
+  .row.user_id
+    label user_id:
+    input(placeholder='type username' v-model='poll_create.user_id')
+  .row.question
+    label question:
+    textarea.vert(placeholder='your poll question?'  v-model='poll_create.question')
+  .row.options
+    label options:
+    .input-options
+      .input-option(v-for='(option, i) in poll_create.options')
+        span.input-li {{ (Number(i)+1) }}.
+        input(
+          placeholder='option'
+          v-model='option.value'
+        )
+        button.input-option-remove.btn-text(
+          v-if='i>1'
+          @click='poll_create.options.splice(i,1)'
+        ) x remove
+      button.input-option.btn-text.add-option(@click='poll_create_add_option') + option
+  .form--space-between
+    .form-status {{poll_create.status}}
+    button.form-submit(type='submit' @click='poll_create_post') post

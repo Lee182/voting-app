@@ -2,17 +2,6 @@
   .title: h1 Voting-App
   .content
     .data
-      code.votes {{polls | json}}
+      code.votes {{ $data }}
     .forms
-      .poll_create
-        .user_id
-          label user_id:
-          input(placeholder='type your username')
-        .question
-          label question:
-          input(placeholder='type your question for people to vote on')
-        .options
-          label options:
-          input(placeholder='option A')
-          input(placeholder='option B')
-        button(type='submit') create poll
+      include ./modules/poll_create.pug
