@@ -193,6 +193,37 @@ textarea {
 textarea.vert {
   resize: vertical;
 }
+.neat-box {
+  background: rgba(255,255,255,0.5);
+  padding: 1rem;
+  border: 1px solid #908e8e;
+  border-radius: 0.3rem;
+}
+.row {
+  width: 100%;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+}
+.row.line {
+  border-top: 1px solid #808080;
+  margin: calc(0.5rem - 1px) 0;
+  padding: 0;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn {
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid #908e8e;
+}
+.btn-text {
+  text-decoration: underline;
+}
 .content {
   display: flex;
   flex-flow: row wrap;
@@ -214,10 +245,6 @@ textarea.vert {
 }
 .poll_create {
   width: 300px;
-  background: rgba(255,255,255,0.5);
-  padding: 1rem;
-  border: 1px solid #908e8e;
-  border-radius: 0.3rem;
 }
 .poll_create h2 {
   text-align: center;
@@ -225,13 +252,6 @@ textarea.vert {
 }
 .poll_create label {
   padding-right: 1rem;
-}
-.poll_create .row {
-  width: 100%;
-  padding: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  flex-flow: row wrap;
 }
 .input-options {
   display: flex;
@@ -257,13 +277,13 @@ textarea.vert {
   border-radius: 0.3rem;
   border: 1px solid #908e8e;
 }
+.form-submit i {
+  margin-left: 0.5rem;
+}
 .form--space-between {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-.btn-text {
-  text-decoration: underline;
 }
 .row.options label {
   width: 100%;
@@ -271,4 +291,44 @@ textarea.vert {
 }
 .input-li {
   color: #a099ec;
+}
+.poll {
+  width: 300px;
+  margin-top: 1em;
+}
+.poll .row.author {
+  justify-content: flex-end;
+}
+.poll .row.options {
+  flex-flow: column nowrap;
+}
+.author-txt {
+  padding-left: 0.5rem;
+}
+i.n {
+  font-weight: bold;
+}
+.see-results-icons {
+  display: flex;
+  flex: 1;
+}
+.see-results-icons > * {
+  flex: 1;
+}
+.send-vote i {
+  margin-left: 1rem;
+}
+.vote-option-tick-box {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #808080;
+}
+.vote-option-value {
+  flex: 1;
+  padding-left: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+.check-watermark {
+  opacity: 0.1;
 }
