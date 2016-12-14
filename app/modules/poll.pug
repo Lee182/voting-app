@@ -1,18 +1,16 @@
 .poll.neat-box
-  .row.question Should the United Kingdom Leave the European Union?
+  .row.question.more_line_height {{poll.question}}
   .row.author
     i.fa.fa-user-circle-o
-    span.author-txt davee
+    span.author-txt {{poll.user_id}}
   .row.line
   .row.options
-    .row.vote-option
-      button.vote-option-tick-box
-        i.fa.fa-check.check-watermark
-      .vote-option-value no Bremain
-    .row.vote-option
-      button.vote-option-tick-box
-        i.fa.fa-check.check-watermark
-      .vote-option-value yes Brexit
+    .row.vote-option(v-for='option in poll.options')
+      button.vote-option-tick-box(@click='vote_tick_fn(poll, option.option)')
+        i.fa.fa-check(
+          :class=`{"check-watermark": poll.vote_tick !== option.option}`,
+        )
+      .vote-option-value.more_line_height {{ option.option }}
   .row.send-vote
     .status
     button.btn
