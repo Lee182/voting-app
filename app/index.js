@@ -1,7 +1,6 @@
 // lib loading
 w = window
 w.postJSON = require('./lib/postJSON.js')
-
 // module loading
 w.poll_create = require('./modules/poll_create.js')
 

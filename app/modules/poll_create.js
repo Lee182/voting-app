@@ -10,7 +10,6 @@ module.exports = function({data, methods, ws}){
   }
 
   methods.poll_create_add_option = function(){
-    console.log("here")
     this.poll_create.options.push({value:''})
   }
 
@@ -20,7 +19,6 @@ module.exports = function({data, methods, ws}){
       vm.poll_create.status = 'disconnected'
       return
     }
-    console.log('hello')
     vm.ws.emit('run', {
       cmd: 'poll_create',
       data: {
