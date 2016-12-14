@@ -60,8 +60,8 @@ module.exports = function({data, methods}) {
       creation_date: new Date('2016-06-23'),
       options: [
         // example option
-        {option: 'no the U.K should Bremain in the EU', user_id: 'james', creation_date: new Date('2016-10-08')},
-        {option: 'yes the U.K should Brexit the EU', user_id: 'james', creation_date: new Date('2016-10-08')}
+        {option: 'no the UK should Bremain in the EU', user_id: 'james', creation_date: new Date('2016-10-08')},
+        {option: 'yes the UK should Brexit the EU', user_id: 'james', creation_date: new Date('2016-10-08')}
       ],
       votes: [],
       vote_tick: undefined
@@ -78,8 +78,9 @@ module.exports = function({data, methods}) {
     }
     if (poll.vote_tick === option) {
       poll.vote_tick = undefined
+    } else {
+      poll.vote_tick = option
     }
-    poll.vote_tick = option
   }
 
   methods.poll1reset()
