@@ -14,7 +14,7 @@ module.exports = function({data, methods}) {
     }
   }
   methods.vote_tick_fn = function(poll, option) {
-    console.log('vote called', poll, option)
+    console.log('vote_tick', poll, option)
     // check if option in array
     var option_exists = poll.options.find(function(item){
       return item.option === option

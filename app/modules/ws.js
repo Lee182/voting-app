@@ -4,14 +4,14 @@ module.exports = function(){
   // window
   var ws = io('http://localhost:3000')
   ws.on('connect', function(e){
-    console.log('connect', 1, e)
+    console.log('ws connect', e)
   })
   ws.on('event', function(data){
-    console.log('event', 2, data)
+    console.log('ws event', data)
   })
 
   ws.on('poll', function(new_poll){
-    console.log('new_poll', new_poll)
+    console.log('ws poll', new_poll)
 
     let poll_index = app.polls.findIndex(function(poll){
       return poll._id === new_poll._id
@@ -26,7 +26,7 @@ module.exports = function(){
   })
 
   ws.on('disconnect', function(e){
-    console.log('disconnect', 3, e)
+    console.log('ws disconnect', e)
   })
 
   return ws

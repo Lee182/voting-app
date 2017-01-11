@@ -1,8 +1,8 @@
 #app(v-cloak)
-  .title: h1 Voting-App
+  .title: h1 voting_app
   .content
-    .data
-      code.votes {{ $data }}
     .forms
       include ./modules/poll_create.pug
       include ./modules/poll.pug
+    .data
+      code.votes {{ $data }}

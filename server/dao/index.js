@@ -150,6 +150,23 @@ o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
     [f](find, project)
 })
 
+o.poll_reads = ensureConnected(function({find_options}) {
+  if (find_options === undefined) {find_options = {}}
+  // find_options {findOne, limit, pagenum}
+  var f = find_options.findOne === true ? 'findOne' : 'find'
+  var limit = (Number(find_options.limit) <= 10) ?
+     Number(find_options.limit): 10
+  var skip = limit * (find_options.pagenum || 0)
+  return o.db
+    .collection('polls')
+    [f]({}, {})
+    .skip(skip)
+    .limit(limit)
+    .toArray()
+    .then(function(polls){
+      return Promise.resolve({polls, find_options})
+    })
+})
 
 
 module.exports = o

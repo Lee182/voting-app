@@ -12,7 +12,7 @@ var port = process.env.PORT || 3000
 var dao = require('./dao')
 
 dao.connect().then(function(){
-  return dao.db.collection('polls').remove({})
+  // return dao.db.collection('polls').remove({})
 })
 
 io.on('connection', function(ws) {
@@ -26,8 +26,8 @@ io.on('connection', function(ws) {
     }
     dao[o.cmd](o.data).then(function(res){
       console.log(res)
-      res.poll.date = Date.now()
-      ws.emit('poll', res.poll)
+      // res.poll.date = Date.now()
+      ws.emit('poll', res)
     })
   })
 })

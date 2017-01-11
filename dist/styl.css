@@ -242,6 +242,7 @@ textarea.vert {
   display: inline-block;
   background: #ddd;
   padding: 1rem;
+  line-height: 1.5;
 }
 .forms {
   padding: 0.5rem;
