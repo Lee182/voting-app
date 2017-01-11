@@ -6,14 +6,14 @@
   .row.line
   .row.options
     .row.vote-option(v-for='option in poll.options')
-      button.vote-option-tick-box(@click='vote_tick_fn(poll, option.option)')
+      button.vote-option-tick-box(@click='vote_tick(poll, option.option)')
         i.fa.fa-check(
-          :class=`{"check-watermark": poll.vote_tick !== option.option}`,
+          :class=`{"check-watermark": poll.user_view.vote_tick !== option.option}`,
         )
       .vote-option-value.more_line_height {{ option.option }}
   .row.send-vote
     .status
-    button.btn
+    button.btn(@click='vote_cast(poll)')
       span send vote
       i.fa.fa-paper-plane-o(aria-hidden='true')
   .row.line.row

@@ -245,11 +245,13 @@ textarea.vert {
   line-height: 1.5;
 }
 .forms {
-  padding: 0.5rem;
-  flex: 0 1 50%;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
+  align-items: flex-start;
+}
+.forms > * {
+  margin: 1rem;
 }
 .poll_create {
   width: 300px;
@@ -302,7 +304,6 @@ textarea.vert {
 }
 .poll {
   width: 300px;
-  margin-top: 1em;
 }
 .poll .row.author {
   justify-content: flex-end;
