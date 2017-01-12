@@ -241,6 +241,7 @@ textarea.vert {
 .data code {
   display: inline-block;
   background: #ddd;
+  color: #444;
   padding: 1rem;
   line-height: 1.5;
 }
@@ -251,7 +252,7 @@ textarea.vert {
   align-items: flex-start;
 }
 .forms > * {
-  margin: 1rem;
+  margin: 0.5rem;
 }
 .poll_create {
   width: 300px;

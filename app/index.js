@@ -1,5 +1,5 @@
 // lib loading
-w = window
+require('./lib/jonoShortcuts.js')
 w.postJSON = require('./lib/postJSON.js')
 
 // module loading
