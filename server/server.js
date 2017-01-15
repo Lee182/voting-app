@@ -15,19 +15,27 @@ dao.connect().then(function(){
   // return dao.db.collection('polls').remove({})
 })
 
+var connected_clients = 0
 io.on('connection', function(ws) {
+  connected_clients++
+  console.log('connected_clients: ', connected_clients)
+  ws.on('disconnect', function(){
+    connected_clients--
+    console.log('connected_clients: ', connected_clients)
+  })
   var the_cookie = ws.handshake.headers.cookie
-  ws.emit('event', { hello: 'world!!' })
-
+  ws.on('test', function(){
+    console.log('ws test')
+  })
   ws.on('run', function(o) {
     console.log(the_cookie)
     if (o.data.poll_id) {
       o.data.poll_id = dao.ObjectId(o.data.poll_id)
     }
     dao[o.cmd](o.data).then(function(res){
-      console.log(res)
+      o.res = res
       // res.poll.date = Date.now()
-      ws.emit('poll', res)
+      ws.emit('run', o)
     })
   })
 })
