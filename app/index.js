@@ -14,7 +14,7 @@ poll_create({data, methods})
 poll1({data, methods})
 
 
-w.app = new Vue({
+w.vm = new Vue({
   el: '#app',
   data,
   computed: {},
@@ -25,6 +25,6 @@ w.app = new Vue({
   },
   methods,
   beforeCreate: function(){
-    this.ws = require('./modules/ws.js')()
+    require('./modules/ws.js')(this)
   }
 })
