@@ -1,8 +1,10 @@
 #app(v-cloak)
-  .title: h1 Voting App
+  .title: h1 Realtime Voting App
+  include modules/ws_status.pug
   .content
     .forms
-      include ./modules/poll_create.pug
-      include ./modules/poll.pug
+      include modules/poll_create.pug
+      include modules/poll.pug
     .data
       code.votes {{ $data }}
+    include modules/toast.pug

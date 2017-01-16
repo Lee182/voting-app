@@ -1,0 +1,6 @@
+.ws_status(
+  :class=`{
+    connected: ws_state,
+    disconnected: !ws_state,
+  }`
+) {{ ws_status }}

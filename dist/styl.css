@@ -254,6 +254,19 @@ textarea.vert {
 .forms > * {
   margin: 0.5rem;
 }
+.ws_status {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+  border-radius: 0 0 0 3rem;
+}
+.ws_status.connected {
+  background: #c7dfff;
+}
+.ws_status.disconnected {
+  background: #ffc786;
+}
 .poll_create {
   width: 300px;
 }
@@ -342,4 +355,32 @@ i.n {
 }
 .check-watermark {
   opacity: 0.05;
+}
+.toast_messages {
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-flow: column-reverse;
+  align-items: end;
+}
+.toast_message {
+  padding: 0.5rem;
+  position: relative;
+}
+.toast_message_close {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  font-size: 1.5rem;
+}
+.toast_message .neat-box {
+  width: 20rem;
+  background: rgba(255,255,255,0.9);
+  padding: 1rem;
+  border: 1px solid #908e8e;
+  border-radius: 0.3rem;
 }

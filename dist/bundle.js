@@ -11,9 +11,9 @@ w.data = {
   polls: []
 }
 w.methods = {}
+w.ws = require('./modules/ws.js')({data})
 poll_create({data, methods})
 poll1({data, methods})
-
 
 w.vm = new Vue({
   el: '#app',
@@ -26,7 +26,7 @@ w.vm = new Vue({
   },
   methods,
   beforeCreate: function(){
-    require('./modules/ws.js')(this)
+
   }
 })
 
@@ -189,35 +189,32 @@ module.exports = function({data, methods, ws}){
 },{}],6:[function(require,module,exports){
 io = require('socket.io-client')
 
-module.exports = function(vm){
-  var ws = io('http://localhost:3000')
+module.exports = function({data}){
+  var ws = io('http://' + document.domain + ':3000')
   ws.on('connect', function(e){
     console.log('ws connected', e)
+    _ws_status()
   })
 
   ws.on('disconnect', function(e){
     console.log('ws disconnect', e)
+    _ws_status()
   })
 
   ws.on('run', function(res){
     console.log('ws run', res)
-
-    // let poll_index = app.polls.findIndex(function(poll){
-    //   return poll._id === new_poll._id
-    // })
-    // if (poll_index === -1) {
-    //   return app.polls.push(new_poll)
-    // }
-    // if (new_poll.date > app.polls[poll_index].date) {
-    //   console.log('herorro')
-    //   app.$set(app.polls, poll_index, new_poll)
-    // }
   })
+
   w.on('unload', function(){
     ws.disconnect()
   })
-
-  vm.ws = ws
+  function _ws_status(){
+    console.log('called', ws.connected)
+    data.ws_state = ws.connected
+    data.ws_status = (ws.connected === true) ? 'connected' : 'disconnected'
+  }
+  _ws_status()
+  return ws
 }
 
 

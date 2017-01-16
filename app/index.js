@@ -10,21 +10,15 @@ w.data = {
   polls: []
 }
 w.methods = {}
+w.ws = require('./modules/ws.js')({data})
 poll_create({data, methods})
 poll1({data, methods})
-
 
 w.vm = new Vue({
   el: '#app',
   data,
   computed: {},
-  watch: {
-    polls: function(e){
-      console.log('polls change')
-    }
-  },
+  watch: {},
   methods,
-  beforeCreate: function(){
-    require('./modules/ws.js')(this)
-  }
+  beforeCreate: function(){}
 })

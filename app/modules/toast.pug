@@ -1,0 +1,15 @@
+mixin message(n)
+  - var i = 0;
+  while i < n
+    .toast_message: .neat-box
+      .toast_message_title Create Poll Invalid
+      .toast_message_message.
+        - in valid text
+        - in valid question
+      .toast_message_icon
+      .toast_message_close
+        i.fa.fa-times
+      - i++
+
+.toast_messages
+  +message(10)
