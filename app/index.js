@@ -3,8 +3,10 @@ require('./lib/jonoShortcuts.js')
 w.postJSON = require('./lib/postJSON.js')
 
 // module loading
-w.poll_create = require('./modules/poll_create.js')
-w.poll1 = require('./modules/poll.js')
+poll_create = require('./modules/poll_create.js')
+poll_view = require('./modules/poll.js')
+toast = require('./modules/toast.js')
+
 
 w.data = {
   polls: []
@@ -12,7 +14,8 @@ w.data = {
 w.methods = {}
 w.ws = require('./modules/ws.js')({data})
 poll_create({data, methods})
-poll1({data, methods})
+poll_view({data, methods})
+toast({data, methods})
 
 w.vm = new Vue({
   el: '#app',
