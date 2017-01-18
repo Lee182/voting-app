@@ -1,5 +1,15 @@
-.toast_messages
-  .toast_message(v-for='toast_message in toast_messages'): .neat-box
+transition-group(
+  class='toast_messages'
+  tag='div'
+  name='staggered-fade',
+  v-on:before-enter='toast_beforeEnter',
+  v-on:enter='toast_enter',
+  v-on:leave='toast_leave'
+)
+  .toast_message(
+    v-for='(toast_message, i) in toast_messages',
+    :key='toast_message'
+  ): .neat-box
     .toast_message_title {{ toast_message.title }}
     .toast_message_message {{ toast_message.message }}
     img.toast_message_icon(

@@ -1,7 +1,7 @@
 // lib loading
 require('./lib/jonoShortcuts.js')
+w.wait = require('./lib/wait.js')
 w.postJSON = require('./lib/postJSON.js')
-
 // module loading
 poll_create = require('./modules/poll_create.js')
 poll_view = require('./modules/poll.js')
@@ -23,5 +23,8 @@ w.vm = new Vue({
   computed: {},
   watch: {},
   methods,
-  beforeCreate: function(){}
+  beforeCreate: function(){},
+  mounted: function(){
+    this.toast_count(1)
+  }
 })
