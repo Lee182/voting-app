@@ -5,7 +5,6 @@ w.postJSON = require('./lib/postJSON.js')
 // module loading
 poll_create = require('./modules/poll_create.js')
 poll_view = require('./modules/poll.js')
-toast = require('./modules/toast.js')
 
 
 w.data = {
@@ -15,7 +14,6 @@ w.methods = {}
 w.ws = require('./modules/ws.js')({data})
 poll_create({data, methods})
 poll_view({data, methods})
-toast({data, methods})
 
 w.vm = new Vue({
   el: '#app',

@@ -356,26 +356,3 @@ i.n {
 .check-watermark {
   opacity: 0.05;
 }
-.toast_messages {
-  position: absolute;
-}
-.toast_message {
-  padding: 0.5rem;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-}
-.toast_message_close {
-  position: absolute;
-  top: 0rem;
-  right: 0rem;
-  font-size: 1.5rem;
-  color: #1d4780;
-}
-.toast_message .neat-box {
-  width: 20rem;
-  background: rgba(255,255,255,0.9);
-  padding: 1rem;
-  border: 1px solid #908e8e;
-  border-radius: 0.3rem;
-}
