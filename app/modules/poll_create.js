@@ -2,7 +2,7 @@ module.exports = function({data, methods, ws}){
 
   methods.poll_create_reset = function() {
     data.poll_create = {
-      user_id: '',
+      user_id: 'davee',
       question: '',
       options: [{value:''}, {value:''}],
       status: ''

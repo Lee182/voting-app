@@ -1,19 +1,22 @@
-// lib loading
+// tools loading
 require('./lib/jonoShortcuts.js')
 w.wait = require('./lib/wait.js')
 w.postJSON = require('./lib/postJSON.js')
+
 // module loading
-poll_create = require('./modules/poll_create.js')
-poll_view = require('./modules/poll.js')
-
-
-w.data = {
-  polls: []
+w.modules = {
+  poll_create: require('./modules/poll_create.js'),
+  poll_view: require('./modules/poll.js'),
+  header_message: require('./modules/header_message.js')
+  ws: require('./modules/ws.js')
 }
+
+w.data = {}
 w.methods = {}
-w.ws = require('./modules/ws.js')({data})
-poll_create({data, methods})
-poll_view({data, methods})
+
+Object.keys(modules).forEach(function(module){
+  module({data, methods})
+})
 
 w.vm = new Vue({
   el: '#app',
@@ -21,8 +24,14 @@ w.vm = new Vue({
   computed: {},
   watch: {},
   methods,
+
+  // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   beforeCreate: function(){},
-  mounted: function(){
-    this.toast_count(1)
-  }
+  created: function(){},
+  beforeMount: function(){},
+  mounted: function(){},
+  beforeUpdate: function(){},
+  updated: function(){},
+  beforeDestroy: function(){},
+  destroyed: function(){}
 })
