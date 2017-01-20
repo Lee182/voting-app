@@ -1,4 +1,5 @@
 module.exports = function({data, methods}) {
+  data.polls = []
   methods.poll1reset = function() {
     data.polls.push({
       _id: 'abc',

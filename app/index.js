@@ -35,3 +35,6 @@ w.vm = new Vue({
   beforeDestroy: function(){},
   destroyed: function(){}
 })
+
+
+Velocity.mock = 10

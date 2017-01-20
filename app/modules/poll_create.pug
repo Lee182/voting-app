@@ -1,13 +1,10 @@
 .poll_create.neat-box
   h2 Create Poll
-  .row.user_id
-    label user_id:
-    input(placeholder='type username' v-model='poll_create.user_id')
   .row.question
     label question:
     textarea.vert(placeholder='your poll question?'  v-model='poll_create.question')
   .row.options
-    label options:
+    label vote options:
     .input-options
       .input-option(v-for='(option, i) in poll_create.options')
         span.input-li {{ (Number(i)+1) }}.
