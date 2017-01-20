@@ -1,21 +1,39 @@
-function validate_poll(o) {
+function type_validate_poll(o) {
   let errs = []
   if (typeof o.question !== 'string') {
-    errs.push('question type must be a string')
+    errs.push({
+      field: 'question',
+      msg: 'question type must be a string'
+    })
   }
   else if (o.question.length < 8) {
-    errs.push('question must be longer than 8 chars')
+    errs.push({
+      field: 'question',
+      msg: 'question must be longer than 8 chars'
+    })
   }
+
   if (typeof o.user_id !== 'string'){
-    errs.push('user_id isnt a string')
+    errs.push({
+      field:'user_id',
+      value: 'user_id isnt a string'
+    })
   }
   if (o.user_id.length <= 0) {
-    errs.push('user_id is small')
+    errs.push({
+      field: 'user_id',
+      msg: 'user_id is small'
+    })
   }
+
   if (Array.isArray(o.options) !== true) {
-    errs.push('options isnt an array')
+    errs.push({
+      field: 'options',
+      msg: 'options isnt an array'
+    })
   }
-  return {field: 'poll', errs, valid: errs.length === 0, o: o}
+
+  return {field: 'poll', errs, valid: errs.length === 0, input_object: o}
 }
 
 function notBoolean(bool) {
@@ -36,7 +54,7 @@ function validate_option(o) {
 }
 
 module.exports = {
-  poll: validate_poll,
+  poll: type_validate_poll,
   option: validate_option,
   vote: validate_option
 }
