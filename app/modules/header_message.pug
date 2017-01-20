@@ -1,0 +1,13 @@
+transition(
+  v-on:before-enter='header_message_beforeEnter',
+  v-on:enter='header_message_enter',
+  v-on:leave='header_message_leave',
+)
+  .header_message(
+    v-if='header_message_text'
+    @click='header_message_onclick',
+  )
+    .header_message-layout
+      p.header_message_text {{ header_message_text }}
+      .header_message_close
+        i.fa.fa-close
