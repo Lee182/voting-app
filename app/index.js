@@ -6,16 +6,16 @@ w.postJSON = require('./lib/postJSON.js')
 // module loading
 w.modules = {
   poll_create: require('./modules/poll_create.js'),
-  poll_view: require('./modules/poll.js'),
-  header_message: require('./modules/header_message.js')
+  poll_view: require('./modules/poll_view.js'),
+  header_message: require('./modules/header_message.js'),
   ws: require('./modules/ws.js')
 }
 
 w.data = {}
 w.methods = {}
 
-Object.keys(modules).forEach(function(module){
-  module({data, methods})
+Object.keys(modules).forEach(function(name){
+  modules[name]({data, methods})
 })
 
 w.vm = new Vue({
@@ -35,6 +35,3 @@ w.vm = new Vue({
   beforeDestroy: function(){},
   destroyed: function(){}
 })
-
-
-Velocity.mock = 10
