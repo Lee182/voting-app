@@ -3,4 +3,6 @@
     connected: ws_state,
     disconnected: !ws_state,
   }`
-) {{ ws_status }}
+)
+  .tri-right
+  .ws_status_text {{ ws_status }}

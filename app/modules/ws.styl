@@ -1,10 +1,32 @@
+
 .ws_status
   position fixed
-  top 0
+  bottom 0
   right 0
-  padding 1rem
-  border-radius 0 0 0 3rem
+  z-index 999
+  display flex
   &.connected
-    background #c7dfff
+    .ws_status_text
+      background #c7dfff
+    .tri-right
+      border-bottom-color #c7dfff
   &.disconnected
-    background #ffc786
+    .ws_status_text
+      background #ffc786
+    .tri-right
+      border-bottom-color #ffc786
+
+.ws_status_text
+  padding 0 1rem 0 0
+  height 3rem
+  display flex
+  justify-content center
+  align-items center
+
+
+.tri-right
+  width 0
+  height 0
+  text-indent -9999px
+  border-bottom 3rem solid blue
+  border-left 4.5rem solid transparent

@@ -1,14 +1,13 @@
 io = require('socket.io-client')
 
 module.exports = function({data}){
+
   var ws = io('http://' + document.domain + ':3000')
   ws.on('connect', function(e){
-    console.log('ws connected', e)
     _ws_status()
   })
 
   ws.on('disconnect', function(e){
-    console.log('ws disconnect', e)
     _ws_status()
   })
 
@@ -20,7 +19,7 @@ module.exports = function({data}){
     ws.disconnect()
   })
   function _ws_status(){
-    console.log('called', ws.connected)
+    console.log('ws.connected', ws.connected)
     data.ws_state = ws.connected
     data.ws_status = (ws.connected === true) ? 'connected' : 'disconnected'
   }
