@@ -160,6 +160,7 @@ module.exports = function({data, methods}) {
 
 },{}],7:[function(require,module,exports){
 var poll_build = require('../../server/dao/poll_build.js')
+var poll_type_validation = require('../../server/dao/poll_type_validation.js')
 
 module.exports = function({data, methods}){
 
@@ -173,15 +174,17 @@ module.exports = function({data, methods}){
   }
 
   methods.poll_create__add_option = function(){
-    this.poll_create.options.push({value:''})
+    this.poll_create.options.push('')
   }
   methods.poll_create__remove_option = function(i){
-    poll_create.options.splice(i, 1)
+    this.poll_create.options.splice(i, 1)
   }
 
   methods.poll_create__post = function(){
     let vm = this
     var poll = poll_build(vm.poll_create)
+    var validness = poll_type_validation.poll(poll)
+
     debugger
     // TODO validate poll_create fields
     // TODO if any field invalid underline red
@@ -212,7 +215,7 @@ module.exports = function({data, methods}){
   }
 */
 
-},{"../../server/dao/poll_build.js":64}],8:[function(require,module,exports){
+},{"../../server/dao/poll_build.js":63,"../../server/dao/poll_type_validation.js":65}],8:[function(require,module,exports){
 module.exports = function({data, methods}) {
   data.polls = []
   methods.poll1reset = function() {
@@ -8311,13 +8314,8 @@ yeast.decode = decode;
 module.exports = yeast;
 
 },{}],63:[function(require,module,exports){
-module.exports = function(a,b){
-  return (new Date(a.creation_date)).getTime() < (new Date(b.creation_date)).getTime()
-}
-
-},{}],64:[function(require,module,exports){
 var poll_option_map = require('./poll_option_map.js')
-var poll_option_GC = require('./poll_option_GC.js')
+// var poll_option_GC = require('./poll_option_GC.js')
 
 function poll_build(o) {
   o = JSON.parse(JSON.stringify(o))
@@ -8326,7 +8324,7 @@ function poll_build(o) {
   }
   if (Array.isArray(o.options) === false) { o.options = [] }
   o.options = o.options.map(poll_option_map(o))
-  o.options = poll_option_GC(o.options)
+  // o.options = poll_option_GC(o.options)
 
   return {
     question: o.question,
@@ -8339,26 +8337,7 @@ function poll_build(o) {
 
 module.exports = poll_build
 
-},{"./poll_option_GC.js":65,"./poll_option_map.js":66}],65:[function(require,module,exports){
-var type_validate = require('./poll_type_validation')
-var sort_creation_date = require('./fn_sort_creation_date.js')
-
-module.exports = function(options) {
-  return options
-  .sort(sort_creation_date)
-  .reduce(function(arr,option){
-    const option_validness = type_validate.option(option)
-    const i = arr.findIndex(function(o2){
-      return o2.option === option.option
-    })
-    if (option_validness.valid === true && i === -1) {
-      arr.push(option)
-    }
-    return arr
-  },[])
-}
-
-},{"./fn_sort_creation_date.js":63,"./poll_type_validation":67}],66:[function(require,module,exports){
+},{"./poll_option_map.js":64}],64:[function(require,module,exports){
 module.exports = function(o) {
   return function(option){
     if (typeof option === 'string') {
@@ -8368,66 +8347,141 @@ module.exports = function(o) {
   }
 }
 
-},{}],67:[function(require,module,exports){
-function type_validate_poll(o) {
-  let errs = []
-  if (typeof o.question !== 'string') {
-    errs.push({
-      field: 'question',
-      msg: 'question type must be a string'
-    })
-  }
-  else if (o.question.split(/ |\n/).join('').length) {
-    errs.push({
-      field: 'question',
-      msg: 'question needs more than 8 letters'
-    })
-  }
+},{}],65:[function(require,module,exports){
+function flatten(arr) {
+  var ans = []
+  arr.forEach(function(ar){
+    if ( Array.isArray(ar) ) { ans = ans.concat( flatten(ar) ) }
+    else { ans.push(ar) }
+  })
+  return ans
+}
+function namespaceErr(name){return function(err) {
+  err = JSON.parse(JSON.stringify(err))
+  err.field =  name+'.'+err.field
+  return err
+}}
 
-  if (typeof o.user_id !== 'string'){
-    errs.push({
-      field:'user_id',
-      value: 'user_id isnt a string'
-    })
+function arr_typevalid(fieldname, validators) {return function(arr){
+  if (Array.isArray(arr) !== true) {
+    return [{
+      field: fieldname,
+      msg: fieldname +' input isnt an array',
+      input: arr
+    }]
   }
-  if (o.user_id.length <= 0) {
+  return flatten(arr.map(function(option, i){
+    return Object.keys(validators).map(function(name){
+      if (name === '{}') { // denotes root and not property
+        return validators[name](option)
+      }
+      return validators[name](option[name])
+    }).map(function(err){
+      err.i = i
+      return err
+    })
+  }) )
+}}
+function obj_typevalid(fieldname, validators) {return function(obj) {
+  // validators is an obj of functions
+  if (typeof obj !== 'object' || Array.isArray(obj)) {
+    return [{
+      field: fieldname,
+      msg: fieldname + ' input isnt a object.',
+      input: obj
+    }]
+  }
+  return flatten(Object.keys(validators).map(function(name){
+    return validators[name]( obj[name] )
+  }) ).map(namespaceErr('option'))
+}}
+
+// validators
+// each validator will return array of errs
+v = {}
+
+// primitive validations
+v.user_id = function(str) {
+  var errs = []
+  if (typeof str !== 'string'){
     errs.push({
       field: 'user_id',
-      msg: 'user_id is small'
+      value: 'user_id isnt a string',
+      input: str
     })
   }
-
-  if (Array.isArray(o.options) !== true) {
+  else if (str.length <= 0) {
     errs.push({
-      field: 'options',
-      msg: 'options isnt an array'
+      field: 'user_id',
+      msg: 'user_id is small',
+      input: str
     })
   }
-
-  return {field: 'poll', errs, valid: errs.length === 0, input_object: o}
-}
-
-function notBoolean(bool) {
-  return !(bool === true || bool === false)
-}
-
-function validate_option(o) {
-  let errs = []
-  if (typeof o.option !== 'string' ||
-      o.option === ''
-  ) {
-    errs.push('option not a string')
+  return errs
+},
+v.creation_date = function(date) {
+  var errs = []
+  if ((new Date(date)).toString() === 'Invalid Date' ) {
+    errs.push({
+      field: 'creation_date',
+      msg: 'invalid date',
+      input: date
+    })
   }
-  if ((new Date(o.creation_date)).toString() === 'Invalid Date') {
-    errs.push('creation_date invalid')
+  return errs
+}
+v.option_str = function(str) {
+  var errs = []
+  if (typeof str !== 'string') {
+    errs.push({
+      field: 'option_str',
+      msg: 'option isnot a string',
+      input: str
+    })
   }
-  return {field: 'option', errs, valid: errs.length === 0, o: o}
+  if (str === '') {
+    errs.push({
+      field: 'option_str',
+      msg: 'option is blank',
+      input: str
+    })
+  }
+  return errs
+}
+v.question = function(str){
+  var errs = []
+  if (typeof str !== 'string') {
+    errs.push({
+      field: 'question',
+      msg: 'question isnot a string',
+      input: str
+    })
+  }
+  else if (str.split(' ').join('').length <= 8) {
+    errs.push({
+      field: 'question',
+      msg: 'question needs more than 8 letters',
+      input: str
+    })
+  }
+  return errs
 }
 
-module.exports = {
-  poll: type_validate_poll,
-  option: validate_option,
-  vote: validate_option
-}
+// secondary validations
+v.option = obj_typevalid('option', {
+  user_id: v.user_id,
+  creation_date: v.creation_date,
+  option: v.option_str
+})
+v.options = arr_typevalid('options', {
+  '{}': v.option
+})
+v.poll = obj_typevalid('poll', {
+  user_id: v.user_id,
+  creation_date: v.creation_date,
+  options: v.options
+})
+
+module.exports = v
 
 },{}]},{},[1]);

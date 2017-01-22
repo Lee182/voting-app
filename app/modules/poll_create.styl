@@ -5,21 +5,25 @@
     padding .5rem
   label
     padding-right 1rem
+  textarea
+    width 100%
+    line-height 1.5
 .input-options
   display flex
   flex-flow column
   input
     margin 0 0.25rem
-    width 152px
     flex 1 1 auto
     &:first-child
       margin-top 0
+.input-options
+  width 100%
 .input-option
-  padding-left 1rem
-  padding-bottom .75rem
   display flex
   flex-flow row wrap
   justify-content space-between
+  padding-left 1rem
+  padding-bottom .75rem
 
 .form-submit
   padding .5rem
@@ -32,8 +36,9 @@
   flex-direction row
   justify-content space-between
 
-.row.options label
-  width 100%
-  padding-bottom 1rem
+.row
+  label
+    width 100%
+    padding-bottom .75rem
 .input-li
   color lighten(#281d9c, 40)

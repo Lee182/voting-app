@@ -1,4 +1,4 @@
-var type_validate = require('./poll_type_validation.js')
+var type_validate = require('../app/modules/type_validation.js')
 var poll_build = require('./poll_build.js')
 var poll_option_GC = require('./poll_option_GC.js')
 

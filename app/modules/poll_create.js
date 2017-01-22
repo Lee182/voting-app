@@ -1,4 +1,5 @@
 var poll_build = require('../../server/dao/poll_build.js')
+var poll_type_validation = require('../../server/dao/poll_type_validation.js')
 
 module.exports = function({data, methods}){
 
@@ -12,15 +13,17 @@ module.exports = function({data, methods}){
   }
 
   methods.poll_create__add_option = function(){
-    this.poll_create.options.push({value:''})
+    this.poll_create.options.push('')
   }
   methods.poll_create__remove_option = function(i){
-    poll_create.options.splice(i, 1)
+    this.poll_create.options.splice(i, 1)
   }
 
   methods.poll_create__post = function(){
     let vm = this
     var poll = poll_build(vm.poll_create)
+    var validness = poll_type_validation.poll(poll)
+
     debugger
     // TODO validate poll_create fields
     // TODO if any field invalid underline red

@@ -314,24 +314,30 @@ textarea.vert {
 .poll_create label {
   padding-right: 1rem;
 }
+.poll_create textarea {
+  width: 100%;
+  line-height: 1.5;
+}
 .input-options {
   display: flex;
   flex-flow: column;
 }
 .input-options input {
   margin: 0 0.25rem;
-  width: 152px;
   flex: 1 1 auto;
 }
 .input-options input:first-child {
   margin-top: 0;
 }
+.input-options {
+  width: 100%;
+}
 .input-option {
-  padding-left: 1rem;
-  padding-bottom: 0.75rem;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
+  padding-left: 1rem;
+  padding-bottom: 0.75rem;
 }
 .form-submit {
   padding: 0.5rem;
@@ -346,9 +352,9 @@ textarea.vert {
   flex-direction: row;
   justify-content: space-between;
 }
-.row.options label {
+.row label {
   width: 100%;
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
 }
 .input-li {
   color: #a099ec;

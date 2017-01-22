@@ -9,8 +9,9 @@
       .input-option(v-for='(option, i) in poll_create.options')
         span.input-li {{ (Number(i)+1) }}.
         input(
-          placeholder='option'
-          v-model='option'
+          placeholder='option',
+          :value='poll_create.options[i]',
+          @input='poll_create.options[i] = $event.target.value'
         )
         button.input-option-remove.btn-text(
           v-if='i>1'
