@@ -15,14 +15,15 @@ dao.connect().then(function(){
   // return dao.db.collection('polls').remove({})
 })
 
-var connected_clients = 0
+var ws_clients_count = 0
 io.on('connection', function(ws) {
-  connected_clients++
-  console.log('connected_clients: ', connected_clients)
+  ws_clients_count++
+  io.emit('ws_clients_count', ws_clients_count)
+
   ws.on('disconnect', function(){
-    connected_clients--
-    console.log('connected_clients: ', connected_clients)
+    ws_clients_count--
   })
+
   var the_cookie = ws.handshake.headers.cookie
   ws.on('test', function(){
     console.log('ws test')

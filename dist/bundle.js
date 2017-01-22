@@ -12,19 +12,13 @@ w.modules = {
   ws: require('./modules/ws.js')
 }
 
-w.data = {}
-w.methods = {}
-
-Object.keys(modules).forEach(function(name){
-  modules[name]({data, methods})
-})
-
-w.vm = new Vue({
+vueobj = {
   el: '#app',
-  data,
+  data: {},
   computed: {},
   watch: {},
-  methods,
+
+  methods: {},
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   beforeCreate: function(){},
@@ -35,7 +29,13 @@ w.vm = new Vue({
   updated: function(){},
   beforeDestroy: function(){},
   destroyed: function(){}
+}
+
+Object.keys(modules).forEach(function(name){
+  modules[name](vueobj)
 })
+
+w.vm = new Vue(vueobj)
 
 },{"./lib/jonoShortcuts.js":2,"./lib/postJSON.js":3,"./lib/wait.js":4,"./modules/header_message.js":5,"./modules/poll_create.js":6,"./modules/poll_view.js":7,"./modules/ws.js":8}],2:[function(require,module,exports){
 // Base Browser stuff
@@ -238,30 +238,35 @@ module.exports = function({data, methods}) {
 },{}],8:[function(require,module,exports){
 io = require('socket.io-client')
 
-module.exports = function({data}){
+module.exports = function({data, watch, computed}){
+  data.ws_connected = false
+  data.ws_clients_count = 0
+
+  computed.ws_status = function() {
+    let vm = this
+    if (vm.ws_connected === false) {
+      return 'ws offline'
+    }
+    return `${vm.ws_clients_count} comms`
+  }
 
   var ws = io('http://' + document.domain + ':3000')
-  ws.on('connect', function(e){
-    _ws_status()
-  })
-
-  ws.on('disconnect', function(e){
-    _ws_status()
+  function _ws_status(){
+    data.ws_connected = ws.connected
+  }
+  ws.on('connect', _ws_status)
+  ws.on('disconnect', _ws_status)
+  ws.on('ws_clients_count', function(e){
+    data.ws_clients_count = e
   })
 
   ws.on('run', function(res){
     console.log('ws run', res)
   })
-
   w.on('unload', function(){
+    // when browser closing tab
     ws.disconnect()
   })
-  function _ws_status(){
-    console.log('ws.connected', ws.connected)
-    data.ws_state = ws.connected
-    data.ws_status = (ws.connected === true) ? 'connected' : 'disconnected'
-  }
-  _ws_status()
   return ws
 }
 

@@ -11,19 +11,13 @@ w.modules = {
   ws: require('./modules/ws.js')
 }
 
-w.data = {}
-w.methods = {}
-
-Object.keys(modules).forEach(function(name){
-  modules[name]({data, methods})
-})
-
-w.vm = new Vue({
+vueobj = {
   el: '#app',
-  data,
+  data: {},
   computed: {},
   watch: {},
-  methods,
+
+  methods: {},
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   beforeCreate: function(){},
@@ -34,4 +28,10 @@ w.vm = new Vue({
   updated: function(){},
   beforeDestroy: function(){},
   destroyed: function(){}
+}
+
+Object.keys(modules).forEach(function(name){
+  modules[name](vueobj)
 })
+
+w.vm = new Vue(vueobj)
