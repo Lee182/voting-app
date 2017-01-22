@@ -6,10 +6,10 @@ function type_validate_poll(o) {
       msg: 'question type must be a string'
     })
   }
-  else if (o.question.length < 8) {
+  else if (o.question.split(/ |\n/).join('').length) {
     errs.push({
       field: 'question',
-      msg: 'question must be longer than 8 chars'
+      msg: 'question needs more than 8 letters'
     })
   }
 

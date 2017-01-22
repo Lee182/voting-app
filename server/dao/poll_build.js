@@ -2,6 +2,7 @@ var poll_option_map = require('./poll_option_map.js')
 var poll_option_GC = require('./poll_option_GC.js')
 
 function poll_build(o) {
+  o = JSON.parse(JSON.stringify(o))
   if (o.creation_date === undefined) {
     o.creation_date = new Date()
   }

@@ -1,7 +1,7 @@
 // voting app in pure javascript before server implementation
 poll_build = require('../dao/poll_build.js')
 poll_option_GC = require('../dao/poll_option_GC.js')
-type_validate = require('../dao/type_validate')
+type_validate = require('../dao/poll_type_validate')
 
 polls_db = []
 // lego

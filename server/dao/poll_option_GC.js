@@ -1,4 +1,4 @@
-var type_validate = require('./type_validate')
+var type_validate = require('./poll_type_validation')
 var sort_creation_date = require('./fn_sort_creation_date.js')
 
 module.exports = function(options) {

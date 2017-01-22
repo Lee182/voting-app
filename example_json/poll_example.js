@@ -1,7 +1,7 @@
 module.exports = {
   // _id: 'asigned by mongodb'
   question: 'What is your favorite color this year?',
-  user_id: 'dave',
+  user_id: 'james',
   creation_date: new Date('2016-10-08'),
   options: [
     // example option
