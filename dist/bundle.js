@@ -272,6 +272,7 @@ module.exports = function({data, methods, computed}){
   methods.ws_run = function(o) {
     return new Promise(function(resolve){
       o.reqtoken = randstr_id()
+      o.d = Date.now()
       _ws_run_reqs[o.reqtoken] = o
       _ws_run_resolutions[o.reqtoken] = resolve
       ws.emit('run', o)
@@ -282,7 +283,7 @@ module.exports = function({data, methods, computed}){
     var resolution = _ws_run_resolutions[res.reqtoken]
     if (req === undefined && resolution === undefined) {return}
 
-    resolution({req, res, yay: 'yaya1!!'})
+    resolution({req, res, d: Date.now() - req.d})
 
     delete _ws_run_reqs[res.reqtoken]
     delete _ws_run_resolutions[res.reqtoken]
