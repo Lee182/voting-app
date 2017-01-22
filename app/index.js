@@ -8,7 +8,8 @@ w.modules = {
   poll_create: require('./modules/poll_create.js'),
   poll_view: require('./modules/poll_view.js'),
   header_message: require('./modules/header_message.js'),
-  ws: require('./modules/ws.js')
+  ws: require('./modules/ws.js'),
+  datas: require('./modules/$data.js')
 }
 
 vueobj = {
