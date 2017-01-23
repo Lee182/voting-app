@@ -17,7 +17,7 @@ module.exports = function({data, methods}) {
   methods.header_message_enter = function(el, done){
     Velocity(el, 'transition.slideDownBigIn', {duration: 1000}).then(
     function(el){
-      return Velocity(el, 'callout.flash', {duration: 500})
+      return Velocity(el, 'callout.bounce', {duration: 1000})
     }).then(done)
   }
   methods.header_message_leave = function(el, done){
@@ -26,7 +26,7 @@ module.exports = function({data, methods}) {
   }
 
 
-  wait(1000).then(function(){
-    vm.header_message_add({})
-  })
+  // wait(1000).then(function(){
+  //   vm.header_message_add({})
+  // })
 }

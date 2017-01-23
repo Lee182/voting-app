@@ -129,7 +129,8 @@ v.options = arr_typevalid('options', {
 v.poll = obj_typevalid('poll', {
   user_id: v.user_id,
   creation_date: v.creation_date,
-  options: v.options
+  options: v.options,
+  question: v.question
 })
 
 module.exports = v

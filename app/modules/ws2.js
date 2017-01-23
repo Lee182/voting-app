@@ -1,131 +1,65 @@
-// io = require('socket.io-client')
-w.isJSON = require('../browser+node/isJSON.js')
+var isJSON = require('../browser+node/isJSON.js')
 
-module.exports = function({data, methods, computed}){
-  data.ws_connected = false
-  data.ws_clients_count = 0
+// connect to the server
+var ws = new WebSocket(`ws://${document.domain}:3000`)
 
-  computed.ws_status = function() {
-    let vm = this
-    if (vm.ws_connected === false) {
-      return 'ws offline'
-    }
-    return `${vm.ws_clients_count} comms`
-  }
+// event connect
+ws.onopen = function(e) {}
 
-  // var ws = io('http://' +  + ':3000')
-  var ws = new WebSocket(`ws://${document.domain}:3000`)
-  var ws_readyStates = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED']
+// event disconnect
+ws.onclose = function(e) {}
 
-  methods.ws_run = function(o) {
-    // req/res in ws
-    return new Promise(function(resolve){
-      o.reqtoken = randstr_id()
-      o.d = Date.now()
-      _ws_run_reqs[o.reqtoken] = o
-      _ws_run_resolutions[o.reqtoken] = resolve
-      methods.ws_sendJSON('run', o)
-    })
-  }
-  methods.ws_sendJSON = function(name, obj) {
-    if (typeof name !== 'string') {return}
-    if (isJSON(obj) === false) {return}
-    var str = JSON.stringify({
-      e: name,
-      d: obj
-    })
-    ws.send( str  )
-  }
+// event messages
+ws.onmessage = function(e) {}
 
-  function _ws_status(e){
-    data.ws_connected = ws.readyState === 1
-    console.log('ws %s', ws_readyStates[ws.readyState])
-    // console.log(e)
-    if (e.type !== 'message' || isJSON(e.data) !== true) {
-      return
-    }
-    var msg = JSON.parse(e.data)
-    if (msg.e === 'run'){
-      run_response(msg.d)
-    }
-  }
-  // vm.ws_sendJSON('hello', {what: 'the hell'})
-
-  ws.on('open', _ws_status)
-  ws.on('close', _ws_status)
-  ws.on('message', _ws_status)
-
-  // ws.on('ws_clients_count', function(e){
-  //   data.ws_clients_count = e
-  // })
-  w.on('unload', function(){
-    // when browser closing tab
-    ws.close()
-  })
-
-  var _ws_run_reqs = {}
-  var _ws_run_resolutions = {}
-  function randstr_id(){
-    return Date.now()+'-'+Math.floor(Math.random()*100000)
-  }
-  function run_response(res){
-    var req = _ws_run_reqs[res.reqtoken]
-    var resolution = _ws_run_resolutions[res.reqtoken]
-    if (req === undefined && resolution === undefined) {return}
-
-    resolution({req, res, d: (Date.now() - req.d) + 'ms'})
-
-    delete _ws_run_reqs[res.reqtoken]
-    delete _ws_run_resolutions[res.reqtoken]
-  }
+// ws.readyState number state from this array
+var ws_readyStates = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED']
 
 
-  w.ws = ws
+// events via ws
+ws_sendJSON = function(name, data) {
+  if (typeof name !== 'string') {return}
+  if (isJSON(obj) === false) {return}
+  var json = JSON.stringify([
+    name, // [0] eventname
+    data  // [1] obj
+  ])
+  ws.send( json  )
+  // TODO server detect json message
+}
+
+ws_message_cb_json = function(e){
+  if (e.type !== 'message' || isJSON(e.data) !== true) {return}
+  var data = JSON.parse(e.data)
+  // TODO event onjson function
 }
 
 
+// req/res via ws
+var _ws_reqs = {}
+var _ws_proms = {}
 
+function randstr_id(){
+  return Date.now()+'-'+Math.floor(Math.random()*100000)
+}
 
+ws_req = function(o) {
+  return new Promise(function(resolve){
+    o.reqtoken = randstr_id()
+    o.d = Date.now()
+    _ws_reqs[o.reqtoken] = o
+    _ws_proms[o.reqtoken] = resolve
+    methods.ws_sendJSON('run', o)
+  })
+}
 
+ws_res = function(res){
+  var req = _ws_reqs[res.reqtoken]
+  var resolve = _ws_proms[res.reqtoken]
+  if (req === undefined && resolution === undefined) {return}
 
-/*
+  resolve({req, res, d: (Date.now() - req.d) + 'ms'})
 
-vm.ws_run({
-  cmd: 'poll_create',
-  data: {
-    poll: {
-      question: 'Whats your favourite color',
-      user_id: 'dave',
-      options: ['red', 'yellow', 'green']
-    }
-  }
-}).then(function(a){
-  console.log(a)
-})
-
-// create poll
-ws.emit('run', {
-  cmd: 'poll_create',
-  data: {
-    poll: {
-      question: 'Whats your favourite color',
-      user_id: 'dave',
-      options: ['red', 'yellow', 'green']
-    }
-  }
-})
-
-
-// add option
-ws.emit('run',{
-  cmd: 'poll_option_add',
-  data: {
-    option: {
-      option: 'blue',
-      user_id: 'dave'
-    },
-    poll_id: app.polls[0]._id
-  }
-})
-
-*/
+  delete _ws_reqs[res.reqtoken]
+  delete _ws_proms[res.reqtoken]
+}

@@ -318,6 +318,16 @@ textarea.vert {
   width: 100%;
   line-height: 1.5;
 }
+.form_err {
+  padding-left: 0.5rem;
+}
+.form_err_msg {
+  padding-left: 0.5rem;
+  border-bottom: 1px solid #b10000;
+}
+.err-red {
+  color: #b10000;
+}
 .input-options {
   width: 100%;
   display: flex;
@@ -345,6 +355,9 @@ textarea.vert {
 }
 .form-submit i {
   margin-left: 0.5rem;
+}
+.form-submit.disabled {
+  opacity: 0.5;
 }
 .form--space-between {
   display: flex;
