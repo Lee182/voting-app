@@ -1,4 +1,4 @@
-var type_validate = require('../../app/modules/type_validation.js')
+var type_validate = require('../../app/browser+node/type_validation.js')
 var sort_creation_date = require('./fn_sort_creation_date.js')
 
 // remove invalid options from the options array

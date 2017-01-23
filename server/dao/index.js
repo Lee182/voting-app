@@ -1,4 +1,4 @@
-var type_validate = require('../../app/modules/type_validation.js')
+var type_validate = require('../../app/browser+node/type_validation.js')
 var poll_map = require('./poll_map.js')
 var poll_map__option_GC = require('./poll_map__option_GC.js')
 
@@ -14,8 +14,7 @@ let o = {
 
 function call_cb(obj) {
   if (typeof o.cb === 'function') {
-    o.cb(obj)
-    // obj {cmd, poll, vote, option}
+    o.cb(obj) // obj {cmd, poll, vote, option}
   }
 }
 

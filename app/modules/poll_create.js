@@ -1,5 +1,5 @@
 var poll_map = require('../../server/dao/poll_map.js')
-var poll_type_validation = require('../../server/dao/poll_type_validation.js')
+var type_validation = require('../browser+node/type_validation.js')
 
 module.exports = function({data, methods}){
 
