@@ -8,6 +8,13 @@
   textarea
     width 100%
     line-height 1.5
+.form_err
+  padding-left .5rem
+  &_msg
+    padding-left .5rem
+    border-bottom 1px solid #b10000
+.err-red
+  color #b10000
 .input-options
   width 100%
   display flex
@@ -32,6 +39,8 @@
   border 1px solid #908e8e
   i
     margin-left .5rem
+  &.disabled
+    opacity .5
 .form--space-between
   display flex
   flex-direction row

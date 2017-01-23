@@ -36,14 +36,14 @@ o.connect = function() {
 o.poll_create = ensureConnected(function({poll}){
   poll = poll_map(poll)
 
-  var val = type_validate.poll(poll)
-  if (val.valid === false) {
-    return Promise.resolve({err: val})
+  var errs = type_validate.poll(poll)
+  if (errs.length !== 0) {
+    return Promise.resolve({err: errs})
   }
   return o.db.collection('polls')
     .insert(poll)
     .then(function(result){
-      call_cb({cmd: 'poll_create', poll})
+      call_cb({cmd: 'poll_create', poll: result.ops[0]})
       return Promise.resolve({poll: result.ops[0]})
     })
     .catch(function(err){

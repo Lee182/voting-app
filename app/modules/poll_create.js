@@ -10,6 +10,8 @@ module.exports = function({data, methods}){
       options: ['', ''],
       status: ''
     }
+    data.poll_create__errs = []
+    data.poll_create__option_blank = false
   }
 
   methods.poll_create__add_option = function(){
@@ -19,13 +21,40 @@ module.exports = function({data, methods}){
     this.poll_create.options.splice(i, 1)
   }
 
-  methods.poll_create__post = function(){
+  function _check_for_blank(errs) {
+    var bool = false
+    errs.forEach(function(err){
+      if (err.msg === 'option is blank') {bool = true}
+    })
+    data.poll_create__option_blank = bool
+  }
+
+  methods.poll_create__validate = function(e) {
     let vm = this
     var poll = poll_map(vm.poll_create)
-    var validness = poll_type_validation.poll(poll)
+    vm.poll_create__errs = type_validation.poll(poll)
+    _check_for_blank(vm.poll_create__errs)
+    vm.$forceUpdate()
+    return poll
+  }
 
-    debugger
-    // TODO validate poll_create fields
+  methods.poll_create__post = function(){
+    let vm = this
+    var poll = vm.poll_create__validate()
+    if (vm.poll_create__errs.length === 0) {
+      vm.ws_run({
+        cmd: 'poll_create',
+        data: {
+          poll: poll
+        }
+      }).then(function(o){
+        if (o.res.err === undefined) {
+          console.log('why me')
+          o.res.data.poll.user_view = {}
+          vm.polls.unshift( o.res.data.poll )
+        }
+      })
+    }
     // TODO if any field invalid underline red
     // icon explanaition mark,
     // err message underneith

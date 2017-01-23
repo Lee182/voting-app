@@ -2,7 +2,17 @@
   h2 Create Poll
   .row.question
     label question:
-    textarea.vert(placeholder='your poll question?'  v-model='poll_create.question')
+    textarea.vert(
+      placeholder='your poll question?'
+      v-model='poll_create.question'
+      @input='poll_create__validate()'
+    )
+    .form_err(
+      v-for='err in poll_create__errs',
+      v-show='err.field === "option.question"'
+    )
+      i.fa.fa-exclamation-circle.err-red
+      span.form_err_msg {{ err.msg }}
   .row.options
     label vote options:
     .input-options
@@ -11,15 +21,24 @@
         input(
           placeholder='option',
           :value='poll_create.options[i]',
-          @input='poll_create.options[i] = $event.target.value'
+          @input='poll_create.options[i] = $event.target.value; poll_create__validate()'
         )
         button.input-option-remove.btn-text(
           v-if='i>1'
           @click='poll_create__remove_option(i)'
         ) x remove
       button.input-option.btn-text.add-option(@click='poll_create__add_option') + option
+      .form_err(
+        v-show='poll_create__option_blank'
+      )
+        i.fa.fa-exclamation-circle.err-red
+        span.form_err_msg no blank options
   .form--space-between
     .form-status {{poll_create.status}}
-    button.form-submit.btn(type='submit' @click='poll_create__post')
+    button.form-submit.btn(
+      type='submit',
+      @click='poll_create__post',
+      :class='{disabled: poll_create__errs.length !== 0}'
+    )
       span post
       i.fa.fa-paper-plane-o(atria-hidden='true')
