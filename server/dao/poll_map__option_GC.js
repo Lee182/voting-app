@@ -1,6 +1,7 @@
-var type_validate = require('./poll_type_validation')
+var type_validate = require('../../app/modules/type_validation.js')
 var sort_creation_date = require('./fn_sort_creation_date.js')
 
+// remove invalid options from the options array
 module.exports = function(options) {
   return options
   .sort(sort_creation_date)

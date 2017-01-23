@@ -1,6 +1,6 @@
-var type_validate = require('../app/modules/type_validation.js')
-var poll_build = require('./poll_build.js')
-var poll_option_GC = require('./poll_option_GC.js')
+var type_validate = require('../../app/modules/type_validation.js')
+var poll_map = require('./poll_map.js')
+var poll_map__option_GC = require('./poll_map__option_GC.js')
 
 // data acess object
 const Mongo = require('mongodb')
@@ -35,7 +35,7 @@ o.connect = function() {
 }
 
 o.poll_create = ensureConnected(function({poll}){
-  poll = poll_build(poll)
+  poll = poll_map(poll)
 
   var val = type_validate.poll(poll)
   if (val.valid === false) {
@@ -96,7 +96,7 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
   function will_adding_option_change_record({poll, option}){
     let unique_options = poll.options.map(function(a){return a})
     unique_options.push(option)
-    unique_options = poll_option_GC(unique_options)
+    unique_options = poll_map__option_GC(unique_options)
 
     const changes = JSON.stringify(poll.options) !== JSON.stringify(unique_options)
 

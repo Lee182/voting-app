@@ -1,6 +1,6 @@
 // voting app in pure javascript before server implementation
-poll_build = require('../dao/poll_build.js')
-poll_option_GC = require('../dao/poll_option_GC.js')
+poll_map = require('../dao/poll_map.js')
+poll_map__option_GC = require('../dao/poll_map__option_GC.js')
 type_validate = require('../dao/poll_type_validate')
 
 polls_db = []
@@ -24,7 +24,7 @@ window.determin_owner = function({poll_user_id, user_id}) {
 }
 
 window.create_poll = function({poll, user}) {
-  let a = poll_build(poll)
+  let a = poll_map(poll)
   let b = type_validate.poll(a)
   if (b.valid === false) {
     return Promise.resolve({err: 'invalid type', type_validation: b})

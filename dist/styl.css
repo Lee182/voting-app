@@ -319,6 +319,7 @@ textarea.vert {
   line-height: 1.5;
 }
 .input-options {
+  width: 100%;
   display: flex;
   flex-flow: column;
 }
@@ -329,10 +330,8 @@ textarea.vert {
 .input-options input:first-child {
   margin-top: 0;
 }
-.input-options {
-  width: 100%;
-}
 .input-option {
+  width: 100%;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;

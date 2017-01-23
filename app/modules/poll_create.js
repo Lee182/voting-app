@@ -1,4 +1,4 @@
-var poll_build = require('../../server/dao/poll_build.js')
+var poll_map = require('../../server/dao/poll_map.js')
 var poll_type_validation = require('../../server/dao/poll_type_validation.js')
 
 module.exports = function({data, methods}){
@@ -21,7 +21,7 @@ module.exports = function({data, methods}){
 
   methods.poll_create__post = function(){
     let vm = this
-    var poll = poll_build(vm.poll_create)
+    var poll = poll_map(vm.poll_create)
     var validness = poll_type_validation.poll(poll)
 
     debugger
