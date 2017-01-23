@@ -8,8 +8,8 @@ module.exports = function({data, methods}){
       user_id: 'davee',
       question: '',
       options: ['', ''],
-      status: ''
     }
+    data.poll_create__status = ''
     data.poll_create__errs = []
     data.poll_create__option_blank = false
   }
@@ -41,6 +41,7 @@ module.exports = function({data, methods}){
   methods.poll_create__post = function(){
     let vm = this
     var poll = vm.poll_create__validate()
+    vm.poll_create__status = 'sending...'
     if (vm.poll_create__errs.length === 0) {
       vm.ws_run({
         cmd: 'poll_create',
@@ -49,15 +50,12 @@ module.exports = function({data, methods}){
         }
       }).then(function(o){
         if (o.res.err === undefined) {
-          console.log('why me')
+          vm.poll_create__reset()
           o.res.data.poll.user_view = {}
           vm.polls.unshift( o.res.data.poll )
         }
       })
     }
-    // TODO if any field invalid underline red
-    // icon explanaition mark,
-    // err message underneith
   }
 
   methods.poll_create__reset()

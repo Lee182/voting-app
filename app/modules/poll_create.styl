@@ -26,12 +26,23 @@
       margin-top 0
 
 .input-option
+  position relative
   width 100%
   display flex
   flex-flow row wrap
   justify-content space-between
   padding-left 1rem
   padding-bottom .75rem
+  &-remove
+    position absolute
+    left -.5rem
+    top -.2rem
+    opacity .2
+    transition opacity 1s ease
+    &:hover
+      opacity 1
+.add-option
+  align-self flex-start
 
 .form-submit
   padding .5rem

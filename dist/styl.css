@@ -341,12 +341,26 @@ textarea.vert {
   margin-top: 0;
 }
 .input-option {
+  position: relative;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
   padding-left: 1rem;
   padding-bottom: 0.75rem;
+}
+.input-option-remove {
+  position: absolute;
+  left: -0.5rem;
+  top: -0.2rem;
+  opacity: 0.2;
+  transition: opacity 1s ease;
+}
+.input-option-remove:hover {
+  opacity: 1;
+}
+.add-option {
+  align-self: flex-start;
 }
 .form-submit {
   padding: 0.5rem;
