@@ -1,5 +1,5 @@
 var poll_map = require('../../server/dao/poll_map.js')
-var type_validation = require('../browser+node/type_validation.js')
+w.type_validation = require('../browser+node/type_validation.js')
 
 module.exports = function({data, methods}){
 
@@ -19,6 +19,7 @@ module.exports = function({data, methods}){
   }
   methods.poll_create__remove_option = function(i){
     this.poll_create.options.splice(i, 1)
+    this.poll_create__validate()
   }
 
   function _check_for_blank(errs) {
@@ -41,21 +42,20 @@ module.exports = function({data, methods}){
   methods.poll_create__post = function(){
     let vm = this
     var poll = vm.poll_create__validate()
-    vm.poll_create__status = 'sending...'
-    if (vm.poll_create__errs.length === 0) {
-      vm.ws_run({
-        cmd: 'poll_create',
-        data: {
-          poll: poll
-        }
-      }).then(function(o){
-        if (o.res.err === undefined) {
-          vm.poll_create__reset()
-          o.res.data.poll.user_view = {}
-          vm.polls.unshift( o.res.data.poll )
-        }
-      })
+    if (vm.poll_create__errs.length !== 0) {
+      return
     }
+    vm.poll_create__status = 'sending...'
+    vm.ws_run({
+      cmd: 'poll_create',
+      data: {poll}
+    }).then(function(o){
+      console.log(o)
+      if (o.res.err === undefined) {
+        vm.poll_create__reset()
+        vm.poll_view__addpoll(o.res.poll)
+      }
+    })
   }
 
   methods.poll_create__reset()

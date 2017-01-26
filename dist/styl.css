@@ -168,7 +168,7 @@ textarea {
 body {
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.2rem;
-  background-image: url("/new_year_background.png");
+  background: #c0c0c0;
   width: 100%;
   height: 100%;
 }
@@ -319,7 +319,7 @@ textarea.vert {
   line-height: 1.5;
 }
 .form_err {
-  padding-left: 0.5rem;
+  padding: 0.5rem 0 0 0.6rem;
 }
 .form_err_msg {
   padding-left: 0.5rem;

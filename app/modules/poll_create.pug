@@ -9,7 +9,7 @@
     )
     .form_err(
       v-for='err in poll_create__errs',
-      v-show='err.field === "option.question"'
+      v-show='err.field === "poll.question"'
     )
       i.fa.fa-exclamation-circle.err-red
       span.form_err_msg {{ err.msg }}

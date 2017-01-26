@@ -45,7 +45,7 @@ module.exports = function({data, methods, computed}){
     var resolution = _ws_run_resolutions[res.reqtoken]
     if (req === undefined && resolution === undefined) {return}
 
-    resolution({req, res, d: Date.now() - req.d})
+    resolution({req, res: res.res, d: Date.now() - req.d})
 
     delete _ws_run_reqs[res.reqtoken]
     delete _ws_run_resolutions[res.reqtoken]

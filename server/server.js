@@ -12,16 +12,15 @@ io.engine.ws = new (require('uws').Server)({
 })
 var port = process.env.PORT || 3000
 var dao = require('./dao')
+var vote_tools = require('./dao/vote_tools.js')
 
-dao.connect().then(function(){
-  // return dao.db.collection('polls').remove({})
-})
+
+dao.connect()
 
 var ws_clients_count = 0
 io.on('connection', function(ws) {
   ws_clients_count++
   io.emit('ws_clients_count', ws_clients_count)
-
   ws.on('disconnect', function(){
     ws_clients_count--
   })
@@ -31,13 +30,18 @@ io.on('connection', function(ws) {
     console.log('ws test')
   })
   ws.on('run', function(o) {
-    console.log(the_cookie)
     if (o.data.poll_id !== undefined) {
       o.data.poll_id = dao.ObjectId(o.data.poll_id)
     }
+    o.data.ip = ws.handshake.address
     dao[o.cmd](o.data).then(function(res){
+      delete o.data
+      if (res.poll) {
+        res.poll.id = res.poll._id.toString()
+        res.poll.votes = vote_tools.aggregate(res.poll.votes)
+        delete res.poll._id
+      }
       o.res = res
-      // res.poll.date = Date.now()
       ws.emit('run', o)
     })
   })

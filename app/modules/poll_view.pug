@@ -1,4 +1,7 @@
-.poll(v-for='poll in polls').neat-box
+.poll(
+  v-for='poll in polls',
+  :key='poll.id'
+).neat-box
   .row.question.more_line_height {{poll.question}}
   .row.author
     i.fa.fa-user-circle-o
@@ -6,15 +9,15 @@
   .row.line
   .row.options
     .row.vote-option(v-for='option in poll.options')
-      button.vote-option-tick-box(@click='vote_tick(poll, option.option)')
+      button.vote-option-tick-box(@click='poll_view__vote_tick(poll, option.option)')
         i.fa.fa-check(
           :class=`{"check-watermark": poll.user_view.vote_tick !== option.option}`,
         )
       .vote-option-value.more_line_height {{ option.option }}
   .row.send-vote
     .status
-    button.btn(@click='vote_cast(poll)')
-      span send vote
+    button.btn(@click='poll_view__vote_cast(poll)')
+      span vote
       i.fa.fa-paper-plane-o(aria-hidden='true')
   .row.line.row
   .row.see-results

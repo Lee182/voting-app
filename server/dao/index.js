@@ -1,4 +1,5 @@
 var type_validate = require('../../app/browser+node/type_validation.js')
+var vote_tools = require('./vote_tools')
 var poll_map = require('./poll_map.js')
 var poll_map__option_GC = require('./poll_map__option_GC.js')
 
@@ -24,6 +25,7 @@ function ensureConnected(fn) {return function() {
 }}
 
 o.connect = function() {
+  console.log('mongo connnecting...')
   return MongoClient.connect(mongourl).then(function(db){
     console.log('mongo connected') // setup db
     o.db = db
@@ -35,7 +37,6 @@ o.connect = function() {
 
 o.poll_create = ensureConnected(function({poll}){
   poll = poll_map(poll)
-
   var errs = type_validate.poll(poll)
   if (errs.length !== 0) {
     return Promise.resolve({err: errs})
@@ -51,9 +52,14 @@ o.poll_create = ensureConnected(function({poll}){
     })
 })
 
-o.poll_remove = ensureConnected(function({_id}){
+o.poll_remove_all = ensureConnected(function(){
+  call_cb({cmd: 'poll_remove_all'})
+  return o.db.collection('polls').remove({})
+})
+
+o.poll_remove = ensureConnected(function({poll_id}){
   return o.db.collection('polls')
-    .remove({_id}).then(function(res){
+    .remove({_id: poll_id}).then(function(res){
       if (res.result.n === 0) {
         return Promise.resolve({err: 'none removed'})
       }
@@ -62,19 +68,39 @@ o.poll_remove = ensureConnected(function({_id}){
     })
 })
 
-o.poll_vote = ensureConnected(function({vote, poll_id}){
-  var val = type_validate.vote(vote)
-  if (val.valid === false) {
-    return Promise.resolve({err: val})
+o.poll_vote = ensureConnected(function({vote, poll_id, ip}){
+  var vote_errs = type_validate.vote(vote)
+  if (vote_errs.length !== 0) {
+    return Promise.resolve({err: vote_errs})
   }
-  var uobj = {}
-  // if (typeof vote.user_id === 'string') {
-  //   uobj.$pull = {votes: {user_id: vote.user_id}}
-  // }
-  // MongoError: Cannot update 'votes' and 'votes'
-  uobj.$push = {votes: vote}
+  if (typeof ip === 'string') {
+    vote.ip = ip
+  }
+  return o.poll_read_byid({poll_id}).then(function(poll){
+    var query = {_id: poll_id}
+    var set = {}
+    var options = {returnOriginal: false}
+    if (vote.user_id !== undefined && vote_tools.has_ip(poll.votes, ip) !== undefined) {
+      query.votes = {$elemMatch: {ip: ip,  user_id: {$exists: false}}}
+      set = {$set: {'votes.$': vote} }
+    }
+    else if (vote_tools.has_user_id(poll.votes, vote.user_id) !== undefined) {
+      query.votes = {$elemMatch: {user_id: vote.user_id} }
+      set = {$set: {'votes.$': vote} }
+    }
+    else {
+      set = {$push: {votes: vote }}
+    }
+    return o.db.collection('polls')
+      .findOneAndUpdate(query, set, options)
+      .then(function(res){
+        poll = res.value
+        return {poll}
+      })
+  })
+  // https://docs.mongodb.com/manual/reference/operator/update/positional/#up._S_
   return o.db.collection('polls')
-    .findOneAndUpdate({_id: poll_id}, uobj)
+    .findOneAndUpdate({_id: poll_id}, update)
     .then(function(result){
       poll = result.value
       poll.votes.push(vote)
@@ -87,10 +113,9 @@ o.poll_vote = ensureConnected(function({vote, poll_id}){
 })
 
 o.poll_option_add = ensureConnected(function({option, poll_id}) {
-  // verify option {option: 'string', creation_date: Date}
-  var val = type_validate.option(option)
-  if (val.valid === false) {
-    return Promise.resolve({err: val})
+  var errs = type_validate.option(option)
+  if (errs.length !== 0) {
+    return Promise.resolve({err: errs})
   }
   function will_adding_option_change_record({poll, option}){
     let unique_options = poll.options.map(function(a){return a})
@@ -112,7 +137,11 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
     }
     return o.db
       .collection('polls')
-      .findOneAndReplace({_id: poll._id}, poll, {returnNewDocument: true})
+      .findOneAndReplace(
+        {_id: poll._id},
+        poll,
+        {returnNewDocument: true}
+      )
       .then(function(result){
         call_cb({cmd: 'poll_option_add', poll:result.value, option})
         return Promise.resolve({poll, option})

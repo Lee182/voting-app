@@ -44,9 +44,15 @@ function obj_typevalid(fieldname, validators) {return function(obj) {
   }
   return flatten(Object.keys(validators).map(function(name){
     return validators[name]( obj[name] )
-  }) ).map(namespaceErr('option'))
+  }) ).map(namespaceErr(fieldname))
 }}
 
+function optional_prop(validator){
+  return function(whatever) {
+    if (whatever === undefined) {return []}
+    return validator(whatever)
+  }
+}
 // validators
 // each validator will return array of errs
 v = {}
@@ -84,12 +90,13 @@ v.creation_date = function(date) {
 v.option_str = function(str) {
   var errs = []
   if (typeof str !== 'string') {
-    errs.push({
+    return [{
       field: 'option_str',
       msg: 'option isnot a string',
       input: str
-    })
+    }]
   }
+  str = str.trim()
   if (str === '') {
     errs.push({
       field: 'option_str',
@@ -124,14 +131,22 @@ v.option = obj_typevalid('option', {
   creation_date: v.creation_date,
   option: v.option_str
 })
+
 v.options = arr_typevalid('options', {
   '{}': v.option
 })
+
 v.poll = obj_typevalid('poll', {
   user_id: v.user_id,
   creation_date: v.creation_date,
   options: v.options,
   question: v.question
+})
+
+v.vote = obj_typevalid('vote', {
+  option: v.option_str,
+  creation_date: v.creation_date,
+  user_id: optional_prop(v.user_id)
 })
 
 module.exports = v
@@ -298,7 +313,7 @@ module.exports = function({data, methods}) {
 
 },{}],8:[function(require,module,exports){
 var poll_map = require('../../server/dao/poll_map.js')
-var type_validation = require('../browser+node/type_validation.js')
+w.type_validation = require('../browser+node/type_validation.js')
 
 module.exports = function({data, methods}){
 
@@ -318,6 +333,7 @@ module.exports = function({data, methods}){
   }
   methods.poll_create__remove_option = function(i){
     this.poll_create.options.splice(i, 1)
+    this.poll_create__validate()
   }
 
   function _check_for_blank(errs) {
@@ -340,21 +356,20 @@ module.exports = function({data, methods}){
   methods.poll_create__post = function(){
     let vm = this
     var poll = vm.poll_create__validate()
-    vm.poll_create__status = 'sending...'
-    if (vm.poll_create__errs.length === 0) {
-      vm.ws_run({
-        cmd: 'poll_create',
-        data: {
-          poll: poll
-        }
-      }).then(function(o){
-        if (o.res.err === undefined) {
-          vm.poll_create__reset()
-          o.res.data.poll.user_view = {}
-          vm.polls.unshift( o.res.data.poll )
-        }
-      })
+    if (vm.poll_create__errs.length !== 0) {
+      return
     }
+    vm.poll_create__status = 'sending...'
+    vm.ws_run({
+      cmd: 'poll_create',
+      data: {poll}
+    }).then(function(o){
+      console.log(o)
+      if (o.res.err === undefined) {
+        vm.poll_create__reset()
+        vm.poll_view__addpoll(o.res.poll)
+      }
+    })
   }
 
   methods.poll_create__reset()
@@ -383,10 +398,10 @@ module.exports = function({data, methods}){
 },{"../../server/dao/poll_map.js":65,"../browser+node/type_validation.js":1}],9:[function(require,module,exports){
 module.exports = function({data, methods}) {
   data.polls = []
-  methods.poll1reset = function() {
-    data.polls = []
+  methods.poll_view__reset = function() {
+    this.polls = []
   }
-  methods.vote_tick = function(poll, option) {
+  methods.poll_view__vote_tick = function(poll, option) {
     // check if option in array
     var option_exists = poll.options.find(function(item){
       return item.option === option
@@ -395,21 +410,42 @@ module.exports = function({data, methods}) {
 
     if (poll.user_view.vote_tick === option) {
       // untick a vote
-      poll.user_view.vote_tick = null
+      poll.user_view.vote_tick = undefined
     } else {
       // tick a vote box
       poll.user_view.vote_tick = option
     }
+    this.$forceUpdate()
   }
 
-  methods.vote_cast = function(poll) {
-    if (poll.user_view.vote_tick === null) {return}
-    // send the vote
-    console.log('vote_cast TODO')
+  methods.poll_view__vote_cast = function(poll) {
+    if (poll.user_view.vote_tick === undefined) {return}
+    let vm = this
+    var vote = {
+      option: poll.user_view.vote_tick,
+      creation_date: new Date()
+    }
+    if (vm.user_id || true) {
+      vote.user_id = 'davee'
+    }
+    vm.ws_run({cmd: 'poll_vote', data: {
+      vote: vote,
+      poll_id: poll.id
+    }}).then(function(o){
+      console.log(o)
+      var i = vm.polls.findIndex(function(poll){
+        return poll.id === o.res.poll.id
+      })
+      vm.polls[i] = o.res.poll
+      console.log(vm.polls[0])
+      vm.$forceUpdate()
+    })
   }
 
-  methods.poll1reset()
-
+  methods.poll_view__addpoll = function(poll){
+    poll.user_view = {}
+    vm.polls.unshift( poll )
+  }
 }
 
 },{}],10:[function(require,module,exports){
@@ -460,7 +496,7 @@ module.exports = function({data, methods, computed}){
     var resolution = _ws_run_resolutions[res.reqtoken]
     if (req === undefined && resolution === undefined) {return}
 
-    resolution({req, res, d: Date.now() - req.d})
+    resolution({req, res: res.res, d: Date.now() - req.d})
 
     delete _ws_run_reqs[res.reqtoken]
     delete _ws_run_resolutions[res.reqtoken]

@@ -43,9 +43,15 @@ function obj_typevalid(fieldname, validators) {return function(obj) {
   }
   return flatten(Object.keys(validators).map(function(name){
     return validators[name]( obj[name] )
-  }) ).map(namespaceErr('option'))
+  }) ).map(namespaceErr(fieldname))
 }}
 
+function optional_prop(validator){
+  return function(whatever) {
+    if (whatever === undefined) {return []}
+    return validator(whatever)
+  }
+}
 // validators
 // each validator will return array of errs
 v = {}
@@ -83,12 +89,13 @@ v.creation_date = function(date) {
 v.option_str = function(str) {
   var errs = []
   if (typeof str !== 'string') {
-    errs.push({
+    return [{
       field: 'option_str',
       msg: 'option isnot a string',
       input: str
-    })
+    }]
   }
+  str = str.trim()
   if (str === '') {
     errs.push({
       field: 'option_str',
@@ -123,14 +130,22 @@ v.option = obj_typevalid('option', {
   creation_date: v.creation_date,
   option: v.option_str
 })
+
 v.options = arr_typevalid('options', {
   '{}': v.option
 })
+
 v.poll = obj_typevalid('poll', {
   user_id: v.user_id,
   creation_date: v.creation_date,
   options: v.options,
   question: v.question
+})
+
+v.vote = obj_typevalid('vote', {
+  option: v.option_str,
+  creation_date: v.creation_date,
+  user_id: optional_prop(v.user_id)
 })
 
 module.exports = v
