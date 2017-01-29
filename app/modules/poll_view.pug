@@ -1,11 +1,19 @@
 .poll(
-  v-for='poll in polls',
+  v-for='poll in polls_inview',
   :key='poll.id'
 ).neat-box
+  .voted-box(v-show=`poll_view__voted(poll)`)
+    .voted
+      i.fa.fa-check
+      span voted
   .row.question.more_line_height {{poll.question}}
-  .row.author
-    i.fa.fa-user-circle-o
-    span.author-txt {{poll.user_id}}
+  .row
+    .settings
+      i.fa.fa-cog
+      span.settings-txt settings
+    .author
+      i.fa.fa-user-circle-o
+      span.author-txt {{poll.user_id}}
   .row.line
   .row.options
     .row.vote-option(v-for='option in poll.options')
@@ -20,28 +28,34 @@
       span vote
       i.fa.fa-paper-plane-o(aria-hidden='true')
   .row.line.row
+
   .row.see-results
-    button.btn-text see results
+    button.btn-text(@click='poll_view__showresults(poll.id, !polls[poll.id].showresults)')
+      span(v-show='polls[poll.id].showresults === false') show
+      span(v-show='polls[poll.id].showresults === true') hide
+      span  results
     .see-results-icons
-      .flex-center: i.gap
-      .flex-center: i.n n
+      .flex-center(
+        @click=`poll_view__showresults(poll.id, 'n')`
+      ): i.n n
       //- .flex-center: i.fa.fa-bar-chart
-      .flex-center: i.fa.fa-pie-chart
-  .row.results-n
-    h3 result count
+      .flex-center(
+        @click=`poll_view__showresults(poll.id, 'pie')`
+      ): i.fa.fa-pie-chart
+  .row.line.row(v-show=`polls[poll.id].showresults`)
+  .row.results-n(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'n'`)
     table
       tr(v-for=`option in poll.votes[poll_view__anom_voters_view]`)
         td.results-n-option {{ option.option }}
         td.results-n-count {{ option.count }}
-  .row.results-pie
+  .row.results-pie(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'pie'`)
     vue-chart(
-      :chart-type='poll_charts[poll.id].type',
-      :columns="poll_charts[poll.id].columns",
-      :rows="poll_charts[poll.id].rows",
-      :options="poll_charts[poll.id].options"
+      :chart-type='polls[poll.id].chart.type',
+      :columns="polls[poll.id].chart.columns",
+      :rows="polls[poll.id].chart.rows",
+      :options="polls[poll.id].chart.options"
     )
-  //- .row.results-bar
-  .row.results-anom_voters_view
+  .row.results-anom_voters_view(v-show='polls[poll.id].showresults')
     .btn-text(@click='poll_view__anom_voter_tog()')
       span(v-show=`poll_view__anom_voters_view === 'all'`) hide
       span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show

@@ -1,17 +1,20 @@
 .poll
   width 300px
-  .row.author
-    justify-content flex-end
   .row.options
     flex-flow column nowrap
+
+.author
+  justify-self flex-end
 .author-txt
+  padding-left .5rem
+.settings-txt
   padding-left .5rem
 i.n
   font-weight bold
 
 .see-results-icons
   display flex
-  flex 1
+  width 100px
   & > *
     flex 1
 
@@ -43,3 +46,18 @@ i.n
 .results-pie
   padding 0
   margin-left -1rem
+
+
+
+.voted-box
+  position relative
+  .voted
+    position absolute
+    top -2rem
+    right -1.6rem
+    color #281d9c
+    font-weight 600
+    background #fff
+    padding .3rem
+    border-radius 1rem
+    border 3px solid #9c4949

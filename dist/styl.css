@@ -388,13 +388,16 @@ textarea.vert {
 .poll {
   width: 300px;
 }
-.poll .row.author {
-  justify-content: flex-end;
-}
 .poll .row.options {
   flex-flow: column nowrap;
 }
+.author {
+  justify-self: flex-end;
+}
 .author-txt {
+  padding-left: 0.5rem;
+}
+.settings-txt {
   padding-left: 0.5rem;
 }
 i.n {
@@ -402,7 +405,7 @@ i.n {
 }
 .see-results-icons {
   display: flex;
-  flex: 1;
+  width: 100px;
 }
 .see-results-icons > * {
   flex: 1;
@@ -435,4 +438,18 @@ i.n {
 .results-pie {
   padding: 0;
   margin-left: -1rem;
+}
+.voted-box {
+  position: relative;
+}
+.voted-box .voted {
+  position: absolute;
+  top: -2rem;
+  right: -1.6rem;
+  color: #281d9c;
+  font-weight: 600;
+  background: #fff;
+  padding: 0.3rem;
+  border-radius: 1rem;
+  border: 3px solid #9c4949;
 }
