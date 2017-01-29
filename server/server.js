@@ -30,6 +30,7 @@ io.on('connection', function(ws) {
     console.log('ws test')
   })
   ws.on('run', function(o) {
+    if (o.data === undefined) {return}
     if (o.data.poll_id !== undefined) {
       o.data.poll_id = dao.ObjectId(o.data.poll_id)
     }

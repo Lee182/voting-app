@@ -63,8 +63,8 @@ o.poll_remove = ensureConnected(function({poll_id}){
       if (res.result.n === 0) {
         return Promise.resolve({err: 'none removed'})
       }
-      call_cb({cmd: 'poll_remove', poll_id: _id})
-      return {result: res.result, poll_id: _id}
+      call_cb({cmd: 'poll_remove', poll_id})
+      return {result: res.result, poll_id}
     })
 })
 

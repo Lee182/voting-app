@@ -15,17 +15,18 @@ module.exports = function({data, methods}) {
     })
   }
 
+
+  methods.poll_view__vote_tick_check = function(poll, option) {
+    let vm = this
+    return vm.polls[poll.id].vote_tick === option
+  }
+
   methods.poll_view__vote_check = function(poll, option) {
     let vm = this
     const prop = vm.user_id === undefined ? 'ip' : 'user_id'
     return poll.votes[prop].option === option
   }
 
-  methods.poll_view__voted = function(poll) {
-    let vm = this
-    var prop = vm.user_id === undefined ? 'ip' : 'user_id'
-    return poll.votes[prop].option !== undefined
-  }
 
   methods.poll_view__vote_tick = function(poll, option) {
     let vm = this
@@ -34,25 +35,25 @@ module.exports = function({data, methods}) {
     })
     if (option_exists === undefined) {return}
 
-    const prop = vm.user_id === undefined ? 'ip' : 'user_id'
 
-    if (poll.votes[prop].option === option) {
+    if (vm.polls[poll.id].vote_tick === option) {
       // untick a vote
-      poll.votes[prop].option = undefined
-    } else {
-      // tick a vote box
-      poll.votes[prop].option = option
+      vm.polls[poll.id].vote_tick = undefined
+      vm.$forceUpdate()
+      return
     }
+    // tick a vote box
+    vm.polls[poll.id].vote_tick  = option
     vm.$forceUpdate()
   }
 
   methods.poll_view__vote_cast = function(poll) {
     let vm = this
     const prop = vm.user_id === undefined ? 'ip' : 'user_id'
-    if (poll.votes[prop].option === undefined) {return}
+    if (vm.polls[poll.id].vote_tick === undefined) {return}
 
     var vote = {
-      option: poll.votes[prop].option,
+      option: vm.polls[poll.id].vote_tick,
       creation_date: new Date()
     }
     if (vm.user_id !== undefined) {
@@ -69,6 +70,13 @@ module.exports = function({data, methods}) {
     })
   }
 
+  methods.poll_view__voted = function(poll) {
+    let vm = this
+    var prop = vm.user_id === undefined ? 'ip' : 'user_id'
+    return poll.votes[prop].option !== undefined
+  }
+
+
   methods.poll_view__addpoll = function(poll){
     let vm = this
     if (vm.polls[poll.id] === undefined) {
@@ -83,6 +91,13 @@ module.exports = function({data, methods}) {
     vm.poll_view__chartmap( poll )
     vm.poll_view__update()
   }
+
+  methods.poll_view__remove_poll = function(poll_id) {
+    let vm = this
+    delete vm.polls[poll_id]
+    vm.poll_view__update()
+  }
+
 
   methods.poll_view__showresults = function(poll_id, bool) {
     let vm = this
@@ -112,5 +127,24 @@ module.exports = function({data, methods}) {
     let vm = this
     var chart = fn_chartmap(poll, vm.poll_view__anom_voters_view)
     vm.polls[poll.id].chart = chart
+  }
+
+
+  methods.delete_poll = function(poll_id) {
+    let vm = this
+    polltxt = vm.polls[poll_id].poll.question
+    var a = confirm(`are you sure you want to delete this poll
+""${polltxt}""
+`)
+    if (a === false) { return }
+
+    vm.ws_run({cmd: 'poll_remove', data:{
+      poll_id: poll_id
+    }}).then(function(o){
+      console.log(o)
+      if (o.res.result && o.res.result.n === 1) {
+        vm.poll_view__remove_poll(o.res.poll_id)
+      }
+    })
   }
 }

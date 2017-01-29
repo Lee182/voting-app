@@ -15,20 +15,52 @@
       i.fa.fa-user-circle-o
       span.author-txt {{poll.user_id}}
   .row.line
-  .row.options
+
+
+  .row.poll_settings
+    .row.delete_poll(
+      v-if='user_id === poll.user_id'
+      @click='delete_poll(poll.id)'
+    ) delete poll
+    .row.add_option add option
+    .row.remove_poll_option(v-if='user_id === poll.user_id') remove poll option
+
+
+  .row.options(v-show='!polls[poll.id].showresults')
     .row.vote-option(v-for='option in poll.options')
       button.vote-option-tick-box(@click='poll_view__vote_tick(poll, option.option)')
         i.fa.fa-check(
-          :class=`{"check-watermark": !poll_view__vote_check(poll, option.option)}`,
+          :class=`{"check-watermark": !poll_view__vote_tick_check(poll, option.option)}`,
         )
+        .vote-stamp(v-show='poll_view__vote_check(poll, option.option)')
       .vote-option-value.more_line_height {{ option.option }}
-  .row.send-vote
+  .row.send-vote(v-show='!polls[poll.id].showresults')
     .status
     button.btn(@click='poll_view__vote_cast(poll)')
       span vote
       i.fa.fa-paper-plane-o(aria-hidden='true')
-  .row.line.row
 
+
+  .row.results-n(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'n'`)
+    table
+      tr(v-for=`option in poll.votes[poll_view__anom_voters_view]`)
+        td.results-n-option {{ option.option }}
+        td.results-n-count {{ option.count }}
+  .row.results-pie(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'pie'`)
+    //- vue-chart(
+    //-   :chart-type='polls[poll.id].chart.type',
+    //-   :columns="polls[poll.id].chart.columns",
+    //-   :rows="polls[poll.id].chart.rows",
+    //-   :options="polls[poll.id].chart.options"
+    //- )
+  .row.results-anom_voters_view(v-show='polls[poll.id].showresults')
+    .btn-text(@click='poll_view__anom_voter_tog()')
+      span(v-show=`poll_view__anom_voters_view === 'all'`) hide
+      span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
+      span  anomynous voters
+
+
+  .row.line.row
   .row.see-results
     button.btn-text(@click='poll_view__showresults(poll.id, !polls[poll.id].showresults)')
       span(v-show='polls[poll.id].showresults === false') show
@@ -42,21 +74,3 @@
       .flex-center(
         @click=`poll_view__showresults(poll.id, 'pie')`
       ): i.fa.fa-pie-chart
-  .row.line.row(v-show=`polls[poll.id].showresults`)
-  .row.results-n(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'n'`)
-    table
-      tr(v-for=`option in poll.votes[poll_view__anom_voters_view]`)
-        td.results-n-option {{ option.option }}
-        td.results-n-count {{ option.count }}
-  .row.results-pie(v-show=`polls[poll.id].showresults && polls[poll.id].resultsview === 'pie'`)
-    vue-chart(
-      :chart-type='polls[poll.id].chart.type',
-      :columns="polls[poll.id].chart.columns",
-      :rows="polls[poll.id].chart.rows",
-      :options="polls[poll.id].chart.options"
-    )
-  .row.results-anom_voters_view(v-show='polls[poll.id].showresults')
-    .btn-text(@click='poll_view__anom_voter_tog()')
-      span(v-show=`poll_view__anom_voters_view === 'all'`) hide
-      span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
-      span  anomynous voters
