@@ -5,7 +5,6 @@ module.exports = function({data, methods}){
 
   methods.poll_create__reset = function() {
     data.poll_create = {
-      user_id: 'davee',
       question: '',
       options: ['', ''],
     }
@@ -32,6 +31,7 @@ module.exports = function({data, methods}){
 
   methods.poll_create__validate = function(e) {
     let vm = this
+    data.poll_create.user_id = vm.user_id
     var poll = poll_map(vm.poll_create)
     vm.poll_create__errs = type_validation.poll(poll)
     _check_for_blank(vm.poll_create__errs)
@@ -63,20 +63,3 @@ module.exports = function({data, methods}){
   data.poll_create.options[0] = 'no the UK should Bremain in the EU',
   data.poll_create.options[1] = 'yes the UK should Brexit the EU'
 }
-
-/*
-{
-  cmd: 'poll_create',
-  data: {
-    poll: {
-      question: vm.poll_create.question,
-      user_id: vm.poll_create.user_id,
-      options: vm.poll_create.options.reduce(function(arr, option){
-        if (option.value.length > 0) {
-          arr.push(option.value)
-        }
-        return arr
-      }, [])
-    }
-  }
-*/

@@ -95,21 +95,13 @@ o.poll_vote = ensureConnected(function({vote, poll_id, ip}){
       .findOneAndUpdate(query, set, options)
       .then(function(res){
         poll = res.value
-        return {poll}
+        call_cb({cmd: 'poll_vote', poll})
+        return Promise.resolve({poll})
+      })
+      .catch(function(err){
+        return Promise.resolve({err})
       })
   })
-  // https://docs.mongodb.com/manual/reference/operator/update/positional/#up._S_
-  return o.db.collection('polls')
-    .findOneAndUpdate({_id: poll_id}, update)
-    .then(function(result){
-      poll = result.value
-      poll.votes.push(vote)
-      call_cb({cmd: 'poll_vote', poll, vote})
-      return Promise.resolve({poll, vote})
-    })
-    .catch(function(err){
-      return Promise.resolve({err})
-    })
 })
 
 o.poll_option_add = ensureConnected(function({option, poll_id}) {

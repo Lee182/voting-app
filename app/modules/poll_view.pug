@@ -11,7 +11,7 @@
     .row.vote-option(v-for='option in poll.options')
       button.vote-option-tick-box(@click='poll_view__vote_tick(poll, option.option)')
         i.fa.fa-check(
-          :class=`{"check-watermark": poll.user_view.vote_tick !== option.option}`,
+          :class=`{"check-watermark": !poll_view__vote_check(poll, option.option)}`,
         )
       .vote-option-value.more_line_height {{ option.option }}
   .row.send-vote
@@ -23,7 +23,26 @@
   .row.see-results
     button.btn-text see results
     .see-results-icons
-      .flex-center: i.tally
+      .flex-center: i.gap
       .flex-center: i.n n
-      .flex-center: i.fa.fa-bar-chart
+      //- .flex-center: i.fa.fa-bar-chart
       .flex-center: i.fa.fa-pie-chart
+  .row.results-n
+    h3 result count
+    table
+      tr(v-for=`option in poll.votes[poll_view__anom_voters_view]`)
+        td.results-n-option {{ option.option }}
+        td.results-n-count {{ option.count }}
+  .row.results-pie
+    vue-chart(
+      :chart-type='poll_charts[poll.id].type',
+      :columns="poll_charts[poll.id].columns",
+      :rows="poll_charts[poll.id].rows",
+      :options="poll_charts[poll.id].options"
+    )
+  //- .row.results-bar
+  .row.results-anom_voters_view
+    .btn-text(@click='poll_view__anom_voter_tog()')
+      span(v-show=`poll_view__anom_voters_view === 'all'`) hide
+      span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
+      span  anomynous voters

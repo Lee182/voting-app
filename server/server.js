@@ -34,13 +34,26 @@ io.on('connection', function(ws) {
       o.data.poll_id = dao.ObjectId(o.data.poll_id)
     }
     o.data.ip = ws.handshake.address
+
+    // TODO get user_id from session store
+    var user_id = 'davee'
+
     dao[o.cmd](o.data).then(function(res){
-      delete o.data
       if (res.poll) {
         res.poll.id = res.poll._id.toString()
-        res.poll.votes = vote_tools.aggregate(res.poll.votes)
+        var votes = res.poll.votes
+        res.poll.votes = vote_tools.aggregate(votes)
+        res.poll.votes.user_id = vote_tools.has_user_id(votes, user_id)
+        res.poll.votes.ip = vote_tools.has_ip(votes, o.data.ip)
         delete res.poll._id
+        if (res.poll.votes.user_id === undefined) {
+          res.poll.votes.user_id = {}
+        }
+        if (res.poll.votes.ip === undefined) {
+          res.poll.votes.ip = {}
+        }
       }
+      delete o.data
       o.res = res
       ws.emit('run', o)
     })
