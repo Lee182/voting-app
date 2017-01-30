@@ -1,7 +1,6 @@
 var type_validate = require('../../app/browser+node/type_validation.js')
 var vote_tools = require('./vote_tools')
 var poll_map = require('./poll_map.js')
-var poll_map__option_GC = require('./poll_map__option_GC.js')
 
 // data acess object
 const Mongo = require('mongodb')
@@ -109,36 +108,16 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
   if (errs.length !== 0) {
     return Promise.resolve({err: errs})
   }
-  function will_adding_option_change_record({poll, option}){
-    let unique_options = poll.options.map(function(a){return a})
-    unique_options.push(option)
-    unique_options = poll_map__option_GC(unique_options)
-
-    const changes = JSON.stringify(poll.options) !== JSON.stringify(unique_options)
-
-    return {changes, unique_options}
-  }
-
-  return o.poll_read_byid({poll_id}).then(function(poll){
-    if (poll === null) {
-      return Promise.resolve({err: 'poll_id not found'})
-    }
-    let a = will_adding_option_change_record({poll, option})
-    if (a.changes === true) {
-      poll.options = a.unique_options
-    }
-    return o.db
-      .collection('polls')
-      .findOneAndReplace(
-        {_id: poll._id},
-        poll,
-        {returnNewDocument: true}
-      )
-      .then(function(result){
-        call_cb({cmd: 'poll_option_add', poll:result.value, option})
-        return Promise.resolve({poll, option})
-      })
-  })
+  return o.db
+    .collection('polls')
+    .findOneAndUpdate(
+      {_id: poll_id, 'options.option': {$ne: option.option} },
+      {$push: {options: option} },
+      {returnOriginal: false})
+    .then(function(res){
+      call_cb({cmd: 'poll_option_add', poll:res.value, option})
+      return Promise.resolve({poll: res.value})
+    })
 })
 
 o.poll_option_remove = ensureConnected(function({option, poll_id}){

@@ -46,11 +46,35 @@ module.exports = function({data, methods}) {
     vm.polls[poll.id].view_settings = !vm.polls[poll.id].view_settings
   }
 
-  methods.remove_poll_option = function(poll_id, option) {
-
+  methods.remove_poll_option = function(poll) {
+    var options = poll.options.map(function(o){
+      return o.option
+    })
+    var optionstr = options.reduce(function(str, option, i){
+      return str += '\n  ' + (i+1) + '. ' + option
+    }, `for question\n  ""${poll.question}""  \ntype in 1 or 2 or 3... to select the option you want to remove\n`)
+    var p = prompt(optionstr)
+    p = Number(p)-1
+    if ( isNaN(p) ){return}
+    console.log(options[p])
   }
-  methods.add_poll_option = function(poll_id, option) {
+  methods.add_poll_option = function(poll) {
+    var newoption = prompt(`type a new option for question\n ""${poll.question}""\n`)
+    if (typeof newoption !== 'string') {return}
+    if ( poll.options.find(function(o){
+      o.option === newoption
+    }) !== undefined) {return}
 
+    vm.ws_run({cmd: 'poll_option_add', data:{
+      option: {
+        option: newoption,
+        user_id: vm.user_id,
+        creation_date: new Date()},
+      poll_id: poll.id
+    }}).then(function(o){
+      console.log(o)
+      vm.poll_view__addpoll(o.res.poll)
+    })
   }
 
   methods.delete_poll = function(poll_id) {

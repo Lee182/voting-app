@@ -3,7 +3,7 @@ require('./lib/jonoShortcuts.js')
 w.wait = require('./lib/wait.js')
 w.postJSON = require('./lib/postJSON.js')
 
-var poll_example = require('../example_json/poll_many-votes.js')
+// var poll_example = require('../example_json/poll_many-votes.js')
 var vue_charts = require('vue-charts')
 
 Vue.use(vue_charts)
@@ -30,7 +30,13 @@ vueobj = {
   beforeCreate: function(){},
   created: function(){
     let vm = this
-    vm.poll_view__addpoll(poll_example)
+    // vm.poll_view__addpoll(poll_example)
+    vm.ws_run({cmd: 'poll_reads', data: {}}).then(function(o){
+      console.log(o)
+      o.res.polls.map(function(poll){
+        vm.poll_view__addpoll(poll)
+      })
+    })
   },
   beforeMount: function(){},
   mounted: function(){},

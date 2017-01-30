@@ -2,40 +2,42 @@
   v-for='o in polls_inview',
   :key='o.poll.id'
 ).neat-box
+
   .voted-box(v-show=`poll_view__voted(o.poll)`)
     .voted
       i.fa.fa-check
       span voted
 
-
   .heading
     .question.more_line_height {{o.poll.question}}
     .row
-      .setting-btn(@click='poll_view__settings_toggle(o.poll)')
-        i.fa.fa-chevron-up.settings-icon(aria-hidden='true')
+      .mindthegap(
+        v-if='user_id === undefined')
+      .setting-btn(
+        @click='poll_view__settings_toggle(o.poll)',
+        v-if='user_id !== undefined')
+        i.fa.fa-cog.settings-icon(aria-hidden='true')
         span.settings-txt settings
       .author
         i.fa.fa-user-circle-o
         span.author-txt {{o.poll.user_id}}
 
-
   .row.settings(
-    v-show='o.view_settings'
-  )
-    .row.add_option.btn-text add poll option
-    .row.remove_poll_option.btn-text(v-if='user_id === o.poll.user_id') remove poll option
+    v-show='o.view_settings && user_id !== undefined')
+    .row.add_option.btn-text(
+      @click='add_poll_option(o.poll)') add poll option
+    .row.remove_poll_option.btn-text(
+      v-if='user_id === o.poll.user_id && o.poll.options.length > 2'
+      @click='remove_poll_option(o.poll)') remove poll option
     .row.delete_poll.btn-text(
       v-if='user_id === o.poll.user_id'
-      @click='delete_poll(o.poll.id)'
-    ) delete poll
-
+      @click='delete_poll(o.poll.id)') delete poll
 
   .row.options(v-show='!o.view_results')
     .row.option-vote(v-for='option in o.poll.options')
       button.option-vote-tick-box(@click='poll_view__vote_tick(o, option.option)')
         i.fa.fa-check(
-          :class=`{"check-watermark": option.option !== o.vote_tick}`,
-        )
+          :class=`{"check-watermark": option.option !== o.vote_tick}`)
         .vote-stamp(v-show='poll_view__votestamp(o.poll, option.option)')
       .option-vote-value.more_line_height {{ option.option }}
     .row.option-vote-send
@@ -43,7 +45,6 @@
       button.btn(@click='poll_view__vote_cast(o.poll)')
         span vote
         i.fa.fa-paper-plane-o(aria-hidden='true')
-
 
   .row.results(v-show='o.view_results')
     table(v-show=`o.view_results_mode === 'n'`)
@@ -64,7 +65,6 @@
         span(v-show=`poll_view__anom_voters_view === 'all'`) hide
         span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
         span  anomynous voters
-
 
   .row.line.row
   .row.resultsbar
