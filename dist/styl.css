@@ -387,39 +387,76 @@ textarea.vert {
 }
 .poll {
   width: 300px;
+  padding: 0;
 }
-.poll .row.options {
-  flex-flow: column nowrap;
+.poll .question {
+  padding: 1rem;
 }
-.author {
+.poll .heading {
+  border-bottom: 1px solid #808080;
+}
+.poll .settings-txt {
+  padding-left: 0.5rem;
+}
+.poll .author {
   justify-self: flex-end;
 }
-.author-txt {
+.poll .author-txt {
   padding-left: 0.5rem;
 }
-.settings-txt {
-  padding-left: 0.5rem;
+.poll .settings {
+  background: #5f5e50;
+  color: #fefefe;
+  border-radius: 0 0 2rem 2rem;
 }
-i.n {
-  font-weight: bold;
+.poll .options {
+  flex-flow: column nowrap;
 }
-.see-results-icons {
+.poll .results-option {
+  padding-bottom: 1rem;
+}
+.poll .results-count {
+  text-align: right;
+  padding-left: 1rem;
+}
+.poll .results-pie {
+  padding: 0;
+}
+.poll .resultsbar-icons {
   display: flex;
   width: 100px;
 }
-.see-results-icons > * {
+.poll .resultsbar-icons > * {
   flex: 1;
 }
-.send-vote i {
+.poll .resultsbar-icons i.n {
+  font-weight: bold;
+}
+.poll .voted-box {
+  position: relative;
+}
+.poll .voted-box .voted {
+  position: absolute;
+  top: -1.2rem;
+  right: 0;
+  color: #9c4949;
+  font-weight: 600;
+  background: #fff;
+  padding: 0.3rem;
+  border-radius: 1rem;
+  border: 3px solid #9c4949;
+}
+.option-vote-send i {
   margin-left: 0.5rem;
 }
-.vote-option-tick-box {
+.option-vote-tick-box {
   width: 2rem;
   height: 2rem;
   border: 1px solid #808080;
   color: #281d9c;
+  position: relative;
 }
-.vote-option-value {
+.option-vote-value {
   flex: 1;
   padding-left: 0.5rem;
   display: flex;
@@ -428,40 +465,11 @@ i.n {
 .check-watermark {
   opacity: 0.05;
 }
-.results-n-option {
-  padding-bottom: 1rem;
-}
-.results-n-count {
-  text-align: right;
-  padding-left: 1rem;
-}
-.results-pie {
-  padding: 0;
-  margin-left: -1rem;
-}
-.voted-box {
-  position: relative;
-}
-.voted-box .voted {
-  position: absolute;
-  top: -2rem;
-  right: -1.6rem;
-  color: #9c4949;
-  font-weight: 600;
-  background: #fff;
-  padding: 0.3rem;
-  border-radius: 1rem;
-  border: 3px solid #9c4949;
-}
-.vote-option-tick-box {
-  position: relative;
-}
 .vote-stamp {
   position: absolute;
   top: 0;
   left: 0;
   height: 2rem;
   width: 2rem;
-  border-radius: 2rem;
   border: 3px solid #9c4949;
 }

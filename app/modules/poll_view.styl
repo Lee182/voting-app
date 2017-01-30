@@ -1,32 +1,66 @@
 .poll
   width 300px
-  .row.options
+  padding 0
+
+  .question
+    padding 1rem
+  .heading
+    border-bottom 1px solid #808080
+  .settings-txt
+    padding-left .5rem
+  .author
+    justify-self flex-end
+  .author-txt
+    padding-left .5rem
+
+  .settings
+    background #5f5e50
+    color #fefefe
+    border-radius 0 0 2rem 2rem
+  .options
     flex-flow column nowrap
+  .results
+    &-option
+      padding-bottom 1rem
+    &-count
+      text-align right
+      padding-left 1rem
+    &-pie
+      padding 0
 
-.author
-  justify-self flex-end
-.author-txt
-  padding-left .5rem
-.settings-txt
-  padding-left .5rem
-i.n
-  font-weight bold
+  .resultsbar-icons
+    display flex
+    width 100px
+    & > *
+      flex 1
+    i.n
+      font-weight bold
 
-.see-results-icons
-  display flex
-  width 100px
-  & > *
-    flex 1
+  .voted-box
+    position relative
+    .voted
+      position absolute
+      top -1.2rem
+      right 0
+      color #9c4949
+      font-weight 600
+      background #fff
+      padding .3rem
+      border-radius 1rem
+      border 3px solid #9c4949
 
-.send-vote i
+
+
+.option-vote-send i
   margin-left .5rem
 
-.vote-option
+.option-vote
   &-tick-box
     width 2rem
     height 2rem
     border 1px solid grey
     color #281d9c
+    position relative
   &-value
     flex 1
     padding-left .5rem
@@ -36,39 +70,10 @@ i.n
 .check-watermark
   opacity .05
 
-.results-n-option
-  padding-bottom 1rem
-.results-n-count
-  text-align right
-  padding-left 1rem
-
-
-.results-pie
-  padding 0
-  margin-left -1rem
-
-
-
-.voted-box
-  position relative
-  .voted
-    position absolute
-    top -2rem
-    right -1.6rem
-    color #9c4949
-    font-weight 600
-    background #fff
-    padding .3rem
-    border-radius 1rem
-    border 3px solid #9c4949
-
-.vote-option-tick-box
-  position relative
 .vote-stamp
   position absolute
   top: 0
   left 0
   height 2rem
   width 2rem
-  border-radius 2rem
   border 3px solid #9c4949

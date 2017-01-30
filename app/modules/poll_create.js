@@ -51,6 +51,9 @@ module.exports = function({data, methods}){
       data: {poll}
     }).then(function(o){
       console.log(o)
+      if (o.res.err && o.res.err.name === 'MongoError'){
+        vm.poll_create__status = 'network error'
+      }
       if (o.res.err === undefined) {
         vm.poll_create__reset()
         vm.poll_view__addpoll(o.res.poll)

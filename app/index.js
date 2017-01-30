@@ -14,7 +14,6 @@ w.modules = {
   header_message: require('./modules/header_message.js'),
   ws: require('./modules/ws.js'),
   datas: require('./modules/$data.js'),
-  chart: require('./modules/example_chart.js')
 }
 
 vueobj = {

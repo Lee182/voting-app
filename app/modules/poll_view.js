@@ -3,47 +3,96 @@ module.exports = function({data, methods}) {
   data.polls = {}
   data.poll_view__anom_voters_view = 'all'
   data.polls_inview = []
+
   methods.poll_view__reset = function() {
-    this.polls = []
+    this.polls = {}
     this.poll_view__anom_voters_view = 'all'
+    this.poll_view__refresh()
   }
 
-  methods.poll_view__update = function() {
+  methods.poll_view__refresh = function() {
     let vm = this
     vm.polls_inview = Object.keys(vm.polls).map(function(id){
-      return vm.polls[id].poll
+      return vm.polls[id]
+    })
+  }
+
+  methods.poll_view__addpoll = function(poll){
+    let vm = this
+    if (vm.polls[poll.id] === undefined) {
+      vm.polls[poll.id] = {
+        poll: {},
+        chart: {},
+        view_settings: false,
+        view_results: false,
+        view_results_mode: 'n' // pie
+      }
+    }
+    vm.polls[poll.id].poll = poll
+    vm.poll_view__chartmap( poll )
+    vm.poll_view__refresh()
+  }
+
+  methods.poll_view__remove_poll = function(poll_id) {
+    let vm = this
+    delete vm.polls[poll_id]
+    vm.poll_view__refresh()
+  }
+
+
+
+  methods.poll_view__settings_toggle = function(poll){
+    let vm = this
+    vm.polls[poll.id].view_settings = !vm.polls[poll.id].view_settings
+  }
+
+  methods.remove_poll_option = function(poll_id, option) {
+
+  }
+  methods.add_poll_option = function(poll_id, option) {
+
+  }
+
+  methods.delete_poll = function(poll_id) {
+    let vm = this
+    polltxt = vm.polls[poll_id].poll.question
+    var a = confirm(`are you sure you want to delete this poll\n""${polltxt}""`)
+    if (a === false) { return }
+
+    vm.ws_run({cmd: 'poll_remove', data:{
+      poll_id: poll_id
+    }}).then(function(o){
+      console.log(o)
+      if (o.res.result && o.res.result.n === 1) {
+        vm.poll_view__remove_poll(o.res.poll_id)
+      }
     })
   }
 
 
-  methods.poll_view__vote_tick_check = function(poll, option) {
-    let vm = this
-    return vm.polls[poll.id].vote_tick === option
-  }
 
-  methods.poll_view__vote_check = function(poll, option) {
+  methods.poll_view__votestamp = function(poll, option) {
     let vm = this
     const prop = vm.user_id === undefined ? 'ip' : 'user_id'
     return poll.votes[prop].option === option
   }
 
-
-  methods.poll_view__vote_tick = function(poll, option) {
+  methods.poll_view__vote_tick = function(o, option) {
     let vm = this
-    const option_exists = poll.options.find(function(item){
+    const option_exists = o.poll.options.find(function(item){
       return item.option === option
     })
     if (option_exists === undefined) {return}
 
 
-    if (vm.polls[poll.id].vote_tick === option) {
+    if (o.vote_tick === option) {
       // untick a vote
-      vm.polls[poll.id].vote_tick = undefined
+      o.vote_tick = undefined
       vm.$forceUpdate()
       return
     }
     // tick a vote box
-    vm.polls[poll.id].vote_tick  = option
+    o.vote_tick = option
     vm.$forceUpdate()
   }
 
@@ -76,35 +125,11 @@ module.exports = function({data, methods}) {
     return poll.votes[prop].option !== undefined
   }
 
-
-  methods.poll_view__addpoll = function(poll){
+  methods.poll_view__showresults = function(o, bool) {
     let vm = this
-    if (vm.polls[poll.id] === undefined) {
-      vm.polls[poll.id] = {
-        poll: {},
-        chart: {},
-        showresults: false,
-        resultsview: 'n' // pie
-      }
-    }
-    vm.polls[poll.id].poll = poll
-    vm.poll_view__chartmap( poll )
-    vm.poll_view__update()
-  }
-
-  methods.poll_view__remove_poll = function(poll_id) {
-    let vm = this
-    delete vm.polls[poll_id]
-    vm.poll_view__update()
-  }
-
-
-  methods.poll_view__showresults = function(poll_id, bool) {
-    let vm = this
-    console.log(poll_id, bool)
-    vm.polls[poll_id].showresults = Boolean(bool)
+    o.view_results = Boolean(bool)
     if (bool === 'pie' || bool === 'n') {
-      vm.polls[poll_id].resultsview = bool
+      o.view_results_mode = bool
     }
     vm.$forceUpdate()
   }
@@ -130,21 +155,4 @@ module.exports = function({data, methods}) {
   }
 
 
-  methods.delete_poll = function(poll_id) {
-    let vm = this
-    polltxt = vm.polls[poll_id].poll.question
-    var a = confirm(`are you sure you want to delete this poll
-""${polltxt}""
-`)
-    if (a === false) { return }
-
-    vm.ws_run({cmd: 'poll_remove', data:{
-      poll_id: poll_id
-    }}).then(function(o){
-      console.log(o)
-      if (o.res.result && o.res.result.n === 1) {
-        vm.poll_view__remove_poll(o.res.poll_id)
-      }
-    })
-  }
 }

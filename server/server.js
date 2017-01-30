@@ -41,18 +41,12 @@ io.on('connection', function(ws) {
 
     dao[o.cmd](o.data).then(function(res){
       if (res.poll) {
-        res.poll.id = res.poll._id.toString()
-        var votes = res.poll.votes
-        res.poll.votes = vote_tools.aggregate(votes)
-        res.poll.votes.user_id = vote_tools.has_user_id(votes, user_id)
-        res.poll.votes.ip = vote_tools.has_ip(votes, o.data.ip)
-        delete res.poll._id
-        if (res.poll.votes.user_id === undefined) {
-          res.poll.votes.user_id = {}
-        }
-        if (res.poll.votes.ip === undefined) {
-          res.poll.votes.ip = {}
-        }
+        res.poll = poll_server_map(res.poll, user_id, o.data.ip)
+      }
+      if (res.polls) {
+        res.polls = res.polls.map(function(poll){
+          return poll_server_map(poll, user_id, o.data.ip)
+        })
       }
       delete o.data
       o.res = res
@@ -60,6 +54,29 @@ io.on('connection', function(ws) {
     })
   })
 })
+
+function poll_server_map(poll, user_id, ip) {
+  console.log(poll._id)
+  poll.id = poll._id.toString()
+  var votes = poll.votes
+  poll.votes = vote_tools.aggregate(votes)
+  if (user_id !== undefined) {
+    poll.votes.user_id = vote_tools.has_user_id(votes, user_id)
+  }
+  if (user_id === undefined){
+    poll.votes.ip = vote_tools.has_ip(votes, ip)
+  }
+
+  delete poll._id
+  if (poll.votes.user_id === undefined) {
+    poll.votes.user_id = {}
+  }
+  if (poll.votes.ip === undefined) {
+    poll.votes.ip = {}
+  }
+  return poll
+}
+
 app.use('/', express.static( path.resolve(__dirname + '/../dist') ))
 
 server.listen(port, function(){
