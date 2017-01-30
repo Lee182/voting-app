@@ -491,8 +491,16 @@ module.exports = function({data, methods}) {
     }, `for question\n  ""${poll.question}""  \ntype in 1 or 2 or 3... to select the option you want to remove\n`)
     var p = prompt(optionstr)
     p = Number(p)-1
-    if ( isNaN(p) ){return}
-    console.log(options[p])
+    if ( isNaN(p) || options[p] === undefined ){return}
+    vm.ws_run({cmd: 'poll_option_remove', data:{
+      poll_id: poll.id,
+      option: options[p]
+    }}).then(function(o){
+      console.log(o)
+      if (o.res.poll) {
+        vm.poll_view__addpoll(o.res.poll)
+      }
+    })
   }
   methods.add_poll_option = function(poll) {
     var newoption = prompt(`type a new option for question\n ""${poll.question}""\n`)

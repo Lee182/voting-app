@@ -118,14 +118,20 @@ o.poll_option_add = ensureConnected(function({option, poll_id}) {
       call_cb({cmd: 'poll_option_add', poll:res.value, option})
       return Promise.resolve({poll: res.value})
     })
+    .catch(function(err){
+      return Promise.resolve({err})
+    })
 })
 
 o.poll_option_remove = ensureConnected(function({option, poll_id}){
   return o.db.collection('polls')
     .findOneAndUpdate(
       {_id: poll_id},
-      {$pull: {options: {option: option} } }
-    )
+      {$pull:{
+        options: {option: option},
+        votes: {option: option}
+      }},
+      {returnOriginal: false})
     .then(function(result){
       call_cb({cmd: 'poll_option_remove', poll:result.value, option})
       return Promise.resolve({option, poll: result.value})
