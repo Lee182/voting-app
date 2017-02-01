@@ -1,13 +1,12 @@
 // https://apps.twitter.com/app/new
 const logtwit = require('login-with-twitter')
-const k = require('./keys.js')
 
 module.exports = function(app, dao, port) {
 
 
 const tw = new logtwit({
-  consumerKey: process.env.TW_CON_KEY || k.twitter.consumerKey,
-  consumerSecret: process.env.TW_CON_SEC || k.twitter.consumerSecret,
+  consumerKey: process.env.TW_CON_KEY || require('./keys.js').twitter.consumerKey,
+  consumerSecret: process.env.TW_CON_SEC || require('./keys.js').twitter.consumerSecret,
   callbackUrl: 'http://localhost:'+port+'/twitter-callback'
 })
 
