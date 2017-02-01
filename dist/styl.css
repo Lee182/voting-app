@@ -181,9 +181,7 @@ body {
   justify-content: center;
   margin-top: 3rem;
 }
-h1 {
-  font-size: 2rem;
-}
+h1,
 h2 {
   font-size: 1.5rem;
 }
@@ -251,6 +249,49 @@ textarea.vert {
 }
 .forms > * {
   margin: 0.5rem;
+}
+.login {
+  min-height: 4rem;
+  margin-bottom: 1rem;
+  background-color: rgba(223,223,223,0.9);
+  border-bottom: 1px solid #908e8e;
+  align-items: center;
+  justify-content: flex-start;
+}
+.login h1 {
+  padding: 0.5rem;
+}
+.login-gap {
+  width: 0.5rem;
+  display: inline-block;
+}
+.login-right {
+  align-self: stretch;
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+.user_id {
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #908e8e;
+  border-radius: 1.2rem;
+}
+.user_id-pic {
+  border-radius: 0 1.2rem 1.2rem 0;
+}
+.user_id-txt {
+  padding: 0.5rem;
+}
+.btn {
+  margin: 0 0.5rem;
+}
+.flex-middle-gap {
+  flex: 1;
 }
 .ws_status {
   position: fixed;
@@ -400,9 +441,15 @@ textarea.vert {
 }
 .poll .author {
   justify-self: flex-end;
+  display: flex;
 }
 .poll .author-txt {
-  padding-left: 0.5rem;
+  align-self: center;
+  padding-right: 0.5rem;
+}
+.poll .author-img {
+  height: 2rem;
+  width: 2rem;
 }
 .poll .settings {
   background: #4d4960;

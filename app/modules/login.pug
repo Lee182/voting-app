@@ -1,0 +1,18 @@
+.login.row
+  h1 Realtime Voting App
+  //- .flex-middle-gap
+  .login-right
+    a.btn(href='/twitter' v-if='user_id === undefined')
+      span login with twitter
+      .login-gap
+      i.fa.fa-twitter
+    button.btn(
+      @click='ws_logout'
+      v-if='user_id !== undefined')
+      span logout
+      .login-gap
+      i.fa.fa-sign-out
+    .user_id(v-if='user_id !== undefined')
+      span.user_id-txt {{ user_id }}
+      img.user_id-pic(
+        v-bind:src=`'https://twitter.com/'+user_id+'/profile_image'`)
