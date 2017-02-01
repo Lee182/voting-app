@@ -40,6 +40,26 @@ module.exports = function({data, methods, computed}){
       ws.emit('run', o)
     })
   }
+  ws.on('test', function(o){
+    console.log(o)
+    data.user_id = o.user_id
+    data.ip = o.ip
+  })
+
+  methods.ws_logout = function(o){
+    let vm = this
+    vm.user_id = undefined
+    w.postJSON({
+      url: '/twitter-logout',
+      data: {},
+      cb: function(){
+        console.log("cb")
+        ws.emit('logout')
+      },
+      cookies: true
+    })
+  }
+
   ws.on('run', function(res){
     var req = _ws_run_reqs[res.reqtoken]
     var resolution = _ws_run_resolutions[res.reqtoken]
@@ -50,6 +70,8 @@ module.exports = function({data, methods, computed}){
     delete _ws_run_reqs[res.reqtoken]
     delete _ws_run_resolutions[res.reqtoken]
   })
+
+
 
   w.ws = ws
 }
