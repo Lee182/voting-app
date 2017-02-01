@@ -25,6 +25,7 @@ vueobj = {
   computed: {},
   watch: {},
   methods: {},
+  filters: {},
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   beforeCreate: function(){},

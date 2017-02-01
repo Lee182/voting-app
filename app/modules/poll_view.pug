@@ -66,8 +66,8 @@
         span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
         span  anomynous voters
 
-  .row.line
-  .row.resultsbar
+  .row.line(v-show='o.poll.votes.all.length !== 0')
+  .row.resultsbar(v-show='o.poll.votes.all.length !== 0')
     button.btn-text(@click='poll_view__showresults(o, !o.view_results)')
       span(v-show='o.view_results === false') show
       span(v-show='o.view_results === true') hide
@@ -82,7 +82,6 @@
       ): i.fa.fa-pie-chart
 
   .row.line
-  .row
-    //- TODO new twitter tab onclick with short link
+  .row.share-on-twitter(@click='twitt_share(o.poll)', target='_blank')
     .btn-text share this poll on twitter
     i.fa.fa-twitter

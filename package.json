@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/server.js",
     "nstart": "nodemon server/server.js -w ./server",
-    "pug": "pug ./app/index.pug -o ./dist/",
+    "pug": "pug -P ./app/index.pug -o ./dist/",
     "watch-pug": "pug -w ./app/index.pug -o ./dist/",
     "css": "stylus ./app/*.styl -o ./dist/",
     "watch-css": "stylus -w ./app/*.styl -o ./dist/",

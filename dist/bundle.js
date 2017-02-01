@@ -179,6 +179,7 @@ vueobj = {
   computed: {},
   watch: {},
   methods: {},
+  filters: {},
 
   // https://vuejs.org/v2/guide/instance.html#Lifecycle-Diagram
   beforeCreate: function(){},
@@ -415,9 +416,6 @@ module.exports = function({data, methods}){
   }
 
   methods.poll_create__reset()
-  data.poll_create.question = 'Should the United Kingdom Leave the European Union?',
-  data.poll_create.options[0] = 'no the UK should Bremain in the EU',
-  data.poll_create.options[1] = 'yes the UK should Brexit the EU'
 }
 
 },{"../../server/dao/poll_map.js":67,"../browser+node/type_validation.js":1}],9:[function(require,module,exports){
@@ -609,6 +607,14 @@ module.exports = function({data, methods}) {
     vm.polls[poll.id].chart = chart
   }
 
+  methods.twitt_share = function(poll){
+    var url = 'http://localhost:3000/polls/'+poll.id
+    var text = `Cast a vote on this poll`
+    var res = new URL(`https://twitter.com/share?url=${url}&text=${text}`).href
+    console.log(res)
+    var win = window.open(res, '_blank')
+    win.focus()
+  }
 
 }
 

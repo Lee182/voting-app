@@ -62,7 +62,4 @@ module.exports = function({data, methods}){
   }
 
   methods.poll_create__reset()
-  data.poll_create.question = 'Should the United Kingdom Leave the European Union?',
-  data.poll_create.options[0] = 'no the UK should Bremain in the EU',
-  data.poll_create.options[1] = 'yes the UK should Brexit the EU'
 }
