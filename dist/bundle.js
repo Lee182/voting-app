@@ -632,8 +632,10 @@ module.exports = function({data, methods, computed}){
     }
     return `${vm.ws_clients_count} comms`
   }
-
-  var ws = io('http://' + document.domain + ':3000')
+  var urlstr = location.protocol + '//' + document.domain
+  if (location.port !== '') {urlstr += ':'+location.port}
+  console.log(urlstr)
+  var ws = io(urlstr)
   function _ws_status(){
     data.ws_connected = ws.connected
   }
