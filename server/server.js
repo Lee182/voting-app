@@ -3,6 +3,19 @@ var app = express()
 var http = require('http')
 var path = require('path')
 var server = http.Server(app)
+var CookieParser = require('cookie-parser')
+
+var cookie_parse = CookieParser()
+function cook_p(req) {
+  return new Promise(function(resolve){
+    // req.headers.cookie
+    cookie_parse(req, {}, function(){
+      resolve(req.cookies)
+    })
+  })
+}
+app.use(cookie_parse)
+
 
 var wsServer = require('uws').Server
 var io = require('socket.io')(server)
@@ -15,29 +28,49 @@ var dao = require('./dao')
 var vote_tools = require('./dao/vote_tools.js')
 
 
+app.use('/', express.static( path.resolve(__dirname + '/../dist') ))
+require('./twitter-session')(app, dao, port)
+
+
 dao.connect()
+
 
 var ws_clients_count = 0
 io.on('connection', function(ws) {
+  // on connection
   ws_clients_count++
   io.emit('ws_clients_count', ws_clients_count)
-  ws.on('disconnect', function(){
-    ws_clients_count--
+
+  // user_id authentication
+  var user_id = undefined
+  var ip = ws.handshake.address
+  cook_p(ws.handshake).then(function(cookie){
+    // console.log(cookie)
+    if (cookie.twitter === undefined) {return}
+    dao.db.collection('polls_sessions')
+      .findOne({_id: cookie.twitter})
+      .then(function(result){
+        if (result === null) {return}
+        user_id = result.user_id
+        ws.emit('test', {user_id, ip})
+      })
   })
 
-  var the_cookie = ws.handshake.headers.cookie
-  ws.on('test', function(){
-    console.log('ws test')
+  ws.on('test', function(o){
+    ws.emit('test',{user_id, ip})
   })
+
+  ws.on('logout', function(){
+    user_id = undefined
+    ws.emit('test', {user_id, ip})
+  })
+
   ws.on('run', function(o) {
     if (o.data === undefined) {return}
     if (o.data.poll_id !== undefined) {
       o.data.poll_id = dao.ObjectId(o.data.poll_id)
     }
-    o.data.ip = ws.handshake.address
-
-    // TODO get user_id from session store
-    var user_id = 'davee'
+    o.data.ip = ip
 
     dao[o.cmd](o.data).then(function(res){
       if (res.poll) {
@@ -53,10 +86,17 @@ io.on('connection', function(ws) {
       ws.emit('run', o)
     })
   })
+
+
+  ws.on('disconnect', function(){
+    ws_clients_count--
+    io.emit('ws_clients_count', ws_clients_count)
+  })
+
+
 })
 
 function poll_server_map(poll, user_id, ip) {
-  console.log(poll._id)
   poll.id = poll._id.toString()
   var votes = poll.votes
   poll.votes = vote_tools.aggregate(votes)
@@ -77,7 +117,7 @@ function poll_server_map(poll, user_id, ip) {
   return poll
 }
 
-app.use('/', express.static( path.resolve(__dirname + '/../dist') ))
+
 
 server.listen(port, function(){
   console.log('server listening at http://localhost:'+port)
@@ -90,7 +130,7 @@ server.listen(port, function(){
 
 
 
-//
+
 // var wss = new wsServer({
 //   server: server,
 //   clientTracking: true,

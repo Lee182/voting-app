@@ -21,6 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
+    "login-with-twitter": "^1.0.0",
     "mongodb": "^2.2.12",
     "socket.io": "^1.7.1",
     "uws": "^0.12.0",
