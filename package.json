@@ -20,6 +20,7 @@
   "repository": "https://github.com/Lee182/voting-app.git",
   "license": "MIT",
   "dependencies": {
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "login-with-twitter": "^1.0.0",
     "mongodb": "^2.2.12",
