@@ -1,13 +1,22 @@
-# voting_app
+# realtime-voting-app
 
 ## description
-voting app that utilises mongodb and websockets for live updates
+a realtime voting app that uses the tools vuejs, socket.io, mongodb, expressjs, login-with-twitter.
 
 ## install
 ```shell
-# if NODE_ENV isn't set to production devDependencies will be installed
+# if NODE_ENV isn't set to 'PRODUCTION' devDependencies will be installed
 $ npm install
 ```
-
-
-## frontend events and rules
+## server/keys.js file
+it is import to create a file called keys which resembles this format.
+```
+module.exports = {
+  mongourl: 'mongodb://[user]:[pwd]@yourdomain.com:[port]/[db_name]',
+  twitter: {
+    consumerKey: 'xxxxxxxxxxxxxxxxxxxxxxxxx',
+    consumerSecret:'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+  }
+}
+```
+twitter oauth keys can be obtainend from https://apps.twitter.com/app/new
