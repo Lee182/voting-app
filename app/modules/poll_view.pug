@@ -19,8 +19,8 @@
         i.fa.fa-cog.settings-icon(aria-hidden='true')
         span.settings-txt settings
       .author
-        i.fa.fa-user-circle-o
         span.author-txt {{o.poll.user_id}}
+        img.author-img(:src=`'https://twitter.com/'+o.poll.user_id+'/profile_image'`)
 
   .row.settings(
     v-show='o.view_settings && user_id !== undefined')
@@ -66,7 +66,7 @@
         span(v-show=`poll_view__anom_voters_view === 'no_anom'`) show
         span  anomynous voters
 
-  .row.line.row
+  .row.line
   .row.resultsbar
     button.btn-text(@click='poll_view__showresults(o, !o.view_results)')
       span(v-show='o.view_results === false') show
@@ -80,3 +80,9 @@
       .flex-center(
         @click=`poll_view__showresults(o, 'pie')`
       ): i.fa.fa-pie-chart
+
+  .row.line
+  .row
+    //- TODO new twitter tab onclick with short link
+    .btn-text share this poll on twitter
+    i.fa.fa-twitter
