@@ -20,3 +20,17 @@ module.exports = {
 }
 ```
 twitter oauth keys can be obtainend from https://apps.twitter.com/app/new
+
+## running dev mode,
+app/** file changes are watched then compiled to dist
+```
+$ npm run start-dev
+```
+
+## running normally
+$ npm run start
+
+## Licence & Author
+Author: Jonathan T L Lee, <jono-lee@hotmail.co.uk>
+
+Licence: MIT
