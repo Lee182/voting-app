@@ -75,7 +75,7 @@ o.poll_vote = ensureConnected(function({vote, poll_id, ip}){
   if (typeof ip === 'string') {
     vote.ip = ip
   }
-  return o.poll_read_byid({poll_id}).then(function(poll){
+  return o.poll_read_byid({poll_id}).then(function({poll}){
     var query = {_id: poll_id}
     var set = {}
     var options = {returnOriginal: false}
@@ -144,7 +144,9 @@ o.poll_option_remove = ensureConnected(function({option, poll_id}){
 
 
 o.poll_read_byid = ensureConnected(function({poll_id}){
-  return o.db.collection('polls').findOne({_id: poll_id})
+  return o.db.collection('polls').findOne({_id: poll_id}).then(function(poll){
+    return Promise.resolve({poll})
+  })
 })
 
 o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
@@ -155,22 +157,28 @@ o.poll_read = ensureConnected(function({find, project, user_id, findOne}) {
     [f](find, project)
 })
 
-o.poll_reads = ensureConnected(function({find_options}) {
-  if (find_options === undefined) {find_options = {}}
+o.poll_reads = ensureConnected(function({op}) {
+  if (op === undefined) {op = {}}
   // find_options {findOne, limit, pagenum}
-  var f = find_options.findOne === true ? 'findOne' : 'find'
-  var limit = (Number(find_options.limit) <= 10) ?
-     Number(find_options.limit): 10
-  var skip = limit * (find_options.pagenum || 0)
-  return o.db
-    .collection('polls')
-    [f]({}, {})
-    .skip(skip)
-    .limit(limit)
-    .toArray()
-    .then(function(polls){
-      return Promise.resolve({polls, find_options})
-    })
+  op.f = (op.f === 'findOne') ? 'findOne' : 'find'
+  op.limit = Number(op.limit) || 10
+  if (op.limit > 10) { op.limit = 10 }
+  op.pagenum = op.pagenum || 0
+  op.skip = op.limit * op.pagenum
+
+  return o.db.collection('polls')[op.f]({},{}).count()
+  .then(function(n){
+    op.count = n
+    return
+  }).then(function(){
+    return o.db.collection('polls')[op.f]({}, {})
+      .skip(op.skip)
+      .limit(op.limit)
+      .toArray()
+  }).then(function(polls){
+    return Promise.resolve({polls, op})
+  })
+
 })
 
 

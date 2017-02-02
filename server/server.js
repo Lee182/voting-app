@@ -31,6 +31,9 @@ var vote_tools = require('./dao/vote_tools.js')
 app.use('/', express.static( path.resolve(__dirname + '/../dist') ))
 require('./twitter-session')(app, dao, port)
 
+app.get('/polls/:poll_id', function(req,res){
+  res.sendFile(path.resolve(__dirname + '/../dist/index.html'))
+})
 
 dao.connect()
 

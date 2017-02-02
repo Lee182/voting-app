@@ -187,7 +187,10 @@ module.exports = function({data, methods}) {
   }
 
   methods.twitt_share = function(poll){
-    var url = 'http://localhost:3000/polls/'+poll.id
+    var port = location.port
+    if (port !== '') {port = ':' + port}
+    var url = location.protocol + '//' + location.hostname + port + '/polls/'+poll.id
+
     var text = `Cast a vote on this poll`
     var res = new URL(`https://twitter.com/share?url=${url}&text=${text}`).href
     console.log(res)

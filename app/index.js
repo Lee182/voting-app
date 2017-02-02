@@ -32,12 +32,23 @@ vueobj = {
   created: function(){
     let vm = this
     // vm.poll_view__addpoll(poll_example)
-    vm.ws_run({cmd: 'poll_reads', data: {}}).then(function(o){
-      console.log(o)
-      o.res.polls.map(function(poll){
-        vm.poll_view__addpoll(poll)
+    if (location.pathname === '/') {
+      vm.ws_run({cmd: 'poll_reads', data: {}}).then(function(o){
+        console.log(o)
+        o.res.polls.map(function(poll){
+          vm.poll_view__addpoll(poll)
+        })
       })
-    })
+    }
+    var arr = location.pathname.split('/')
+    if (arr[1] === 'polls' && arr.length === 3){
+      vm.ws_run({cmd: 'poll_read_byid', data: {
+        poll_id: arr[2]
+      }}).then(function(o){
+        console.log(o)
+        vm.poll_view__addpoll(o.res.poll)
+      })
+    }
   },
   beforeMount: function(){},
   mounted: function(){},

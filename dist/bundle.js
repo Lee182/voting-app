@@ -186,12 +186,23 @@ vueobj = {
   created: function(){
     let vm = this
     // vm.poll_view__addpoll(poll_example)
-    vm.ws_run({cmd: 'poll_reads', data: {}}).then(function(o){
-      console.log(o)
-      o.res.polls.map(function(poll){
-        vm.poll_view__addpoll(poll)
+    if (location.pathname === '/') {
+      vm.ws_run({cmd: 'poll_reads', data: {}}).then(function(o){
+        console.log(o)
+        o.res.polls.map(function(poll){
+          vm.poll_view__addpoll(poll)
+        })
       })
-    })
+    }
+    var arr = location.pathname.split('/')
+    if (arr[1] === 'polls' && arr.length === 3){
+      vm.ws_run({cmd: 'poll_read_byid', data: {
+        poll_id: arr[2]
+      }}).then(function(o){
+        console.log(o)
+        vm.poll_view__addpoll(o.res.poll)
+      })
+    }
   },
   beforeMount: function(){},
   mounted: function(){},
@@ -608,7 +619,10 @@ module.exports = function({data, methods}) {
   }
 
   methods.twitt_share = function(poll){
-    var url = 'http://localhost:3000/polls/'+poll.id
+    var port = location.port
+    if (port !== '') {port = ':' + port}
+    var url = location.protocol + '//' + location.hostname + port + '/polls/'+poll.id
+
     var text = `Cast a vote on this poll`
     var res = new URL(`https://twitter.com/share?url=${url}&text=${text}`).href
     console.log(res)
