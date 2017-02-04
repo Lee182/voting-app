@@ -172,6 +172,7 @@ o.poll_reads = ensureConnected(function({op}) {
     return
   }).then(function(){
     return o.db.collection('polls')[op.f]({}, {})
+      .sort({creation_date: -1})
       .skip(op.skip)
       .limit(op.limit)
       .toArray()
